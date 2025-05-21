@@ -5,6 +5,7 @@ import './App.css';
 // Lazy load components
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
+const Login = lazy(() => import('./pages/Login'));
 
 // Loading fallback component
 const Loading = () => (
@@ -23,6 +24,9 @@ const Layout = () => {
           </li>
           <li>
             <NavLink to="/about">About</NavLink>
+          </li>
+          <li>
+            <NavLink to="/login">Login</NavLink>
           </li>
         </ul>
       </nav>
@@ -45,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "about",
         element: <About />
+      },
+      {
+        path: "login",
+        element: <Login />
       }
     ]
   }
