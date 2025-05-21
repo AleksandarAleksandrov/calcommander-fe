@@ -1,13 +1,22 @@
-import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './slices/counterSlice';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { createReduxHistoryContext } from 'redux-first-history';
+import { createBrowserHistory } from 'history';
+import { userReducer } from './user/userReducer';
 
-export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-    // Add more reducers here as they are created
-  },
+const { routerMiddleware, createReduxHistory, routerReducer } = createReduxHistoryContext({
+    history: createBrowserHistory(),
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch; 
+const rootReducer = combineReducers({
+    router: routerReducer,
+    user: userReducer,
+});
+
+export const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(routerMiddleware),
+});
+
+export const history = createReduxHistory(store);
+export default store;
