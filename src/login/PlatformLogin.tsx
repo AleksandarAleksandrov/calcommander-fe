@@ -28,9 +28,10 @@ const floatingStyles = defineStyle({
 export default function PlatformLogin() {
 
     const { isPlatformContinueLoading } = useSelector((state: RootState) => state.login);
+    const { isEmailConnected } = useSelector((state: RootState) => state.login);
 
     const [email, setEmail] = useState("");
-
+    const [password, setPassword] = useState("");
     const dispatch = useDispatch();
 
     const handleContinue = () => {
@@ -55,6 +56,27 @@ export default function PlatformLogin() {
                     <Field.Label css={floatingStyles}>Email</Field.Label>
                 </Box>
             </Field.Root>
+            {isEmailConnected ? <Field.Root>
+                <Box pos="relative" w="full"
+                    data-state="open"
+                    _open={{
+                        animation: "fade-in 500ms ease-out",
+                    }}
+                >
+                    <Input
+                        className='peer'
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder=''
+                        size="xl"
+                        css={{ "--focus-color": "blue" }}
+                        borderRadius="md"
+                        borderColor="gray.300"
+                    />
+                    <Field.Label css={floatingStyles}>Password</Field.Label>
+                </Box>
+            </Field.Root> : null}
             <Button
                 type="submit"
                 size="xl"

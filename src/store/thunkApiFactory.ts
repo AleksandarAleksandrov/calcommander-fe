@@ -42,8 +42,6 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
         if(['GET', 'DELETE'].includes(method)) {
           const queryParamsString = new URLSearchParams(data as any).toString();
           fullPath += `?${queryParamsString}`;
-          console.log(data);
-          console.log(fullPath);
         }
 
         const response = await fetch(fullPath, fetchOptions);
