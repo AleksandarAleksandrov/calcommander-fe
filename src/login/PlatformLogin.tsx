@@ -1,5 +1,8 @@
+import type { RootState } from "@/store";
+import { setIsPlatformContinueLoading } from "@/store/loginSlice";
 import { Button, Input, Field, Box, defineStyle } from "@chakra-ui/react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const floatingStyles = defineStyle({
     pos: "absolute",
@@ -24,7 +27,14 @@ const floatingStyles = defineStyle({
 
 export default function PlatformLogin() {
 
+    const dispatch = useDispatch();
+    const { isPlatformContinueLoading } = useSelector((state: RootState) => state.login);
+
     const [email, setEmail] = useState("");
+
+    const handleContinue = () => {
+        dispatch(setIsPlatformContinueLoading());
+    }
 
     return (
         <>
@@ -50,6 +60,8 @@ export default function PlatformLogin() {
                 w="100%"
                 borderRadius="md"
                 colorPalette="blue"
+                onClick={handleContinue}
+                loading={isPlatformContinueLoading}
             >
                 Continue
             </Button>
