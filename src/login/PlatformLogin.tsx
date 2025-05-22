@@ -1,5 +1,5 @@
 import type { RootState } from "@/store";
-import { setIsPlatformContinueLoading } from "@/store/loginSlice";
+import { checkUserExistance } from "@/store/loginSlice";
 import { Button, Input, Field, Box, defineStyle } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,13 +27,14 @@ const floatingStyles = defineStyle({
 
 export default function PlatformLogin() {
 
-    const dispatch = useDispatch();
     const { isPlatformContinueLoading } = useSelector((state: RootState) => state.login);
 
     const [email, setEmail] = useState("");
 
+    const dispatch = useDispatch();
+
     const handleContinue = () => {
-        dispatch(setIsPlatformContinueLoading());
+        dispatch(checkUserExistance({ email }) as any);
     }
 
     return (

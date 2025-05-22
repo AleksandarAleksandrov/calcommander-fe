@@ -38,7 +38,15 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
           fetchOptions.headers.Authorization = `Bearer ${token}`;
         }
         
-        const response = await fetch(`http://localhost:8080/api/v1${endpoint}`, fetchOptions);
+        let fullPath = `http://localhost:8080/api/v1${endpoint}`;
+        if(['GET', 'DELETE'].includes(method)) {
+          const queryParamsString = new URLSearchParams(data as any).toString();
+          fullPath += `?${queryParamsString}`;
+          console.log(data);
+          console.log(fullPath);
+        }
+
+        const response = await fetch(fullPath, fetchOptions);
         
         const responseData = await response.json();
         
