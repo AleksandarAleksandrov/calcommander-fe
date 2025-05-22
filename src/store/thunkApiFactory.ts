@@ -1,6 +1,6 @@
 // Enhanced API thunk factory
-export const createApiThunk = (type: string, endpoint: string, method = 'GET', options: any = {}) => {
-    return (data = null) => async (dispatch: any, getState: any) => {
+export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET', options: any = {}) => {
+    return (data?: T) => async (dispatch: any, getState: any) => {
       const requestId = Date.now().toString();
       const startTime = performance.now();
       

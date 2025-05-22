@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { loginAction, LoginPayload } from '../store/user/userActions';
+import { loginAction, LoginPayload } from '../store/userSlice';
 
 interface LoginState {
   email: string;
