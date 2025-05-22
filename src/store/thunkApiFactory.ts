@@ -38,7 +38,7 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
           fetchOptions.headers.Authorization = `Bearer ${token}`;
         }
         
-        const response = await fetch(`https://api.example.com${endpoint}`, fetchOptions);
+        const response = await fetch(`http://localhost:8080/api/v1${endpoint}`, fetchOptions);
         
         const responseData = await response.json();
         

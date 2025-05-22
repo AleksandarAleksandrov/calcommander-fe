@@ -35,5 +35,4 @@ export interface LoginPayload {
 
 export const loginAction = createApiThunk<LoginPayload>(LOGIN, '/login', 'POST');
 
-export const { } = userSlice.actions;
 export default userSlice.reducer;
