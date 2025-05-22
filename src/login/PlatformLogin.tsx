@@ -1,6 +1,7 @@
 import type { RootState } from "@/store";
-import { checkUserExistance, loginAction } from "@/store/loginSlice";
-import { Button, Input, Field, Box, defineStyle } from "@chakra-ui/react";
+import { checkUserExistance, loginAction, UserExistence } from "@/store/loginSlice";
+import { Button, Input, Field, Box, defineStyle, Text } from "@chakra-ui/react";
+import { PasswordInput } from "@/components/ui/password-input"
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -28,8 +29,8 @@ const floatingStyles = defineStyle({
 export default function PlatformLogin() {
 
     const { isPlatformContinueLoading } = useSelector((state: RootState) => state.login);
-    const { isEmailConnected } = useSelector((state: RootState) => state.login);
-    const { isEmailPresent } = useSelector((state: RootState) => state.login);
+    const { existanceStatus } = useSelector((state: RootState) => state.login);
+    const { loginFailed } = useSelector((state: RootState) => state.login);
 
     const dispatch = useDispatch();
 
@@ -38,14 +39,16 @@ export default function PlatformLogin() {
     const [password, setPassword] = useState("");
 
     const handleContinue = () => {
-        if(!isEmailConnected && !isEmailPresent) {
+        if(existanceStatus === UserExistence.NOT_INITIATED) {
             dispatch(checkUserExistance({ email }) as any);
         }
-        if(isEmailPresent && isEmailConnected) {
+        if(existanceStatus === UserExistence.NOT_PRESENT) {
+            
+        }
+        if(existanceStatus === UserExistence.PRESENT) {
             dispatch(loginAction({ email, password }) as any);
         }
     }
-
 
     return (
         <>
@@ -65,16 +68,15 @@ export default function PlatformLogin() {
                     <Field.Label css={floatingStyles}>Email</Field.Label>
                 </Box>
             </Field.Root>
-            {isEmailConnected ? <Field.Root>
+            {existanceStatus === UserExistence.PRESENT ? <Field.Root>
                 <Box pos="relative" w="full"
                     data-state="open"
                     _open={{
                         animation: "fade-in 500ms ease-out",
                     }}
                 >
-                    <Input
+                    <PasswordInput
                         className='peer'
-                        type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder=''
@@ -86,6 +88,12 @@ export default function PlatformLogin() {
                     <Field.Label css={floatingStyles}>Password</Field.Label>
                 </Box>
             </Field.Root> : null}
+            {loginFailed && (
+                <Text color="red.500" fontSize="sm" alignSelf="flex-start" 
+                textStyle="sm" css={{ marginTop: "-1.0rem", marginBottom: "-0.5rem" }}>
+                    Wrong email or password
+                </Text>
+            )}
             <Button
                 type="submit"
                 size="xl"
