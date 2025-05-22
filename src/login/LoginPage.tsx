@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { LoginForm } from './LoginForm';
 
-export const LoginFormExample = () => {
+export default function LoginPage() {
   const handleSubmit = (email: string) => {
     console.log('Login with email:', email);
     // Handle email login logic here

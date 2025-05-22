@@ -1,12 +1,11 @@
 import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider, NavLink, Outlet } from 'react-router-dom';
 import './App.css';
-import { LoginFormExample } from './components/ui/LoginPage';
+import LoginPage  from './login/LoginPage';
 
 // Lazy load components
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
-const Login = lazy(() => import('./pages/Login'));
 
 // Loading fallback component
 const Loading = () => (
@@ -53,7 +52,7 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <LoginFormExample />
+        element: <LoginPage />
       }
     ]
   }

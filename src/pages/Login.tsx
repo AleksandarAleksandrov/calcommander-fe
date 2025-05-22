@@ -73,7 +73,7 @@ class Login extends Component<Props, LoginState> {
             />
           </div>
           <button type="submit" className="login-button">
-            Login
+            Logi
           </button>
         </form>
       </div>
