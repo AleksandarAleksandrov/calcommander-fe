@@ -1,5 +1,5 @@
 import type { RootState } from "@/store";
-import { checkUserExistance } from "@/store/loginSlice";
+import { checkUserExistance, loginAction } from "@/store/loginSlice";
 import { Button, Input, Field, Box, defineStyle } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,14 +29,23 @@ export default function PlatformLogin() {
 
     const { isPlatformContinueLoading } = useSelector((state: RootState) => state.login);
     const { isEmailConnected } = useSelector((state: RootState) => state.login);
+    const { isEmailPresent } = useSelector((state: RootState) => state.login);
+
+    const dispatch = useDispatch();
+
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const dispatch = useDispatch();
 
     const handleContinue = () => {
-        dispatch(checkUserExistance({ email }) as any);
+        if(!isEmailConnected && !isEmailPresent) {
+            dispatch(checkUserExistance({ email }) as any);
+        }
+        if(isEmailPresent && isEmailConnected) {
+            dispatch(loginAction({ email, password }) as any);
+        }
     }
+
 
     return (
         <>
