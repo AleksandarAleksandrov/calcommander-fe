@@ -45,12 +45,18 @@ export default function PlatformLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleContinue = () => {
+    const handleContinue = async () => {
         if(existanceStatus === UserExistence.NOT_INITIATED) {
             dispatch(checkUserExistance({ email }) as any);
         }
         if(existanceStatus === UserExistence.PRESENT) {
-            dispatch(loginAction({ email, password }) as any);
+            const {jwt, expiresAt} = await dispatch(loginAction({ email, password }) as any);
+            
+            if(jwt && expiresAt) {
+                localStorage.setItem("jwt", jwt);
+                localStorage.setItem("expiresAt", expiresAt);
+                navigate("/");
+            }
         }
     }
 

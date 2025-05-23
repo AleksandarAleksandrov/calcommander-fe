@@ -31,15 +31,15 @@ export enum UserExistence {
     PRESENT_THRU_OAUTH
 }
 
+const INIT_STATE = {
+    existanceStatus: UserExistence.NOT_INITIATED,
+    isPlatformContinueLoading: false,
+    loginFailed: false,
+};
+
 const loginSlice = createSlice({
     name: 'login',
-    initialState: {
-        existanceStatus: UserExistence.NOT_INITIATED,
-        isPlatformContinueLoading: false,
-        isEmailPresent: false,
-        isEmailConnected: false,
-        loginFailed: false,
-    },
+    initialState: INIT_STATE,
     reducers:{
         
     },
@@ -50,6 +50,8 @@ const loginSlice = createSlice({
             })
             .addCase(LOGIN_SUCCESS, (state, action) => {
                 state.isPlatformContinueLoading = false;
+                state.loginFailed = false;
+                state.existanceStatus = UserExistence.NOT_INITIATED;
             })
             .addCase(LOGIN_FAILURE, (state, action) => {
                 state.isPlatformContinueLoading = false;
@@ -62,17 +64,12 @@ const loginSlice = createSlice({
                 switch(action.payload.data.status) {
                     case 'PRESENT':
                         state.existanceStatus = UserExistence.PRESENT;
-                        state.isEmailConnected = true;
-                        state.isEmailPresent = true;
                         break;
                     case 'NOT_PRESENT':
                         state.existanceStatus = UserExistence.NOT_PRESENT;
-                        state.isEmailPresent = false;
                         break;
                     case 'PRESENT_THRU_OAUTH':
                         state.existanceStatus = UserExistence.PRESENT_THRU_OAUTH;
-                        state.isEmailConnected = false;
-                        state.isEmailPresent = true;
                 }
                 state.isPlatformContinueLoading = false;
             })
@@ -84,11 +81,11 @@ const loginSlice = createSlice({
 
 export const checkUserExistance = createApiThunk<{
     email: string;
-}>(CHECK_USER_EXISTANCE, '/login', 'GET');
+}>(CHECK_USER_EXISTANCE, '/sign-in', 'GET');
 
 export const loginAction = createApiThunk<{
     email: string;
     password: string;
-}>(LOGIN, '/login', 'POST');
+}>(LOGIN, '/sign-in', 'POST');
 
 export default loginSlice.reducer;
