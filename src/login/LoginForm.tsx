@@ -37,7 +37,7 @@ export const LoginForm = ({
         <Flex direction="column" align="center" w="100%">
             <Box mb={8}>
                 <Text fontSize="3xl" fontWeight="bold" textAlign="center">
-                    Log in to your account
+                    Sign in to your account
                 </Text>
             </Box>
 

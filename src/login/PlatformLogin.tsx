@@ -4,6 +4,7 @@ import { Button, Input, Field, Box, defineStyle, Text } from "@chakra-ui/react";
 import { PasswordInput } from "@/components/ui/password-input"
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const floatingStyles = defineStyle({
     pos: "absolute",
@@ -34,6 +35,12 @@ export default function PlatformLogin() {
 
     const dispatch = useDispatch();
 
+    const navigate = useNavigate();
+    if(existanceStatus === UserExistence.NOT_PRESENT) {
+        navigate("/signup");
+    } else if(existanceStatus === UserExistence.PRESENT_THRU_OAUTH) {
+        navigate("/signup/complete-native-auth");
+    }
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -41,9 +48,6 @@ export default function PlatformLogin() {
     const handleContinue = () => {
         if(existanceStatus === UserExistence.NOT_INITIATED) {
             dispatch(checkUserExistance({ email }) as any);
-        }
-        if(existanceStatus === UserExistence.NOT_PRESENT) {
-            
         }
         if(existanceStatus === UserExistence.PRESENT) {
             dispatch(loginAction({ email, password }) as any);
