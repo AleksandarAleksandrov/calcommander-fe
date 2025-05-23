@@ -1,12 +1,23 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
-import { useGoogleOneTapLogin } from "@react-oauth/google";
+import { useGoogleLogin, useGoogleOneTapLogin } from "@react-oauth/google";
+import { useDispatch } from "react-redux";
+import { googleOneTapSignInAction, googleSignInAction } from "@/store/loginSlice";
 
 export default function ThirdPartLogin() {
 
-    const googleLogin = useGoogleOneTapLogin({
+    const dispatch = useDispatch();
+
+    useGoogleOneTapLogin({
         onSuccess: (codeResponse) => {
-            console.log(codeResponse);
+            dispatch(googleOneTapSignInAction({ credential: codeResponse.credential as string }) as any);
+        },
+        use_fedcm_for_button: true
+    });
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: (codeResponse) => {
+            dispatch(googleSignInAction({ credential: codeResponse.access_token as string }) as any);
         }
     });
 

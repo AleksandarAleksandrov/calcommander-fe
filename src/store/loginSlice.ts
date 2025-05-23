@@ -12,6 +12,11 @@ export const CHECK_USER_EXISTANCE_REQUEST = `${CHECK_USER_EXISTANCE}_REQUEST`;
 export const CHECK_USER_EXISTANCE_SUCCESS = `${CHECK_USER_EXISTANCE}_SUCCESS`;
 export const CHECK_USER_EXISTANCE_FAILURE = `${CHECK_USER_EXISTANCE}_FAILURE`;
 
+export const GOOGLE_LOGIN = 'GOOGLE_LOGIN';
+export const GOOGLE_LOGIN_REQUEST = `${GOOGLE_LOGIN}_REQUEST`;
+export const GOOGLE_LOGIN_SUCCESS = `${GOOGLE_LOGIN}_SUCCESS`;
+export const GOOGLE_LOGIN_FAILURE = `${GOOGLE_LOGIN}_FAILURE`;
+
 export enum UserExistence {
     /**
      * User is not checked yet
@@ -87,5 +92,13 @@ export const loginAction = createApiThunk<{
     email: string;
     password: string;
 }>(LOGIN, '/sign-in', 'POST');
+
+export const googleOneTapSignInAction = createApiThunk<{
+    credential: string;
+}>(GOOGLE_LOGIN, '/sign-in/google/one-tap', 'POST');
+
+export const googleSignInAction = createApiThunk<{
+    credential: string;
+}>(GOOGLE_LOGIN, '/sign-in/google', 'POST');
 
 export default loginSlice.reducer;
