@@ -12,6 +12,7 @@ import {
     Field,
 } from '@chakra-ui/react';
 import PlatformLogin from './PlatformLogin';
+import ThirdPartLogin from './ThirdPartLogin';
 
 interface LoginFormProps {
     onSubmit?: (email: string) => void;
@@ -63,31 +64,7 @@ export const LoginForm = ({
                             <Box flex="1" h="1px" bg="gray.200" />
                         </HStack>
 
-                        <Button
-                            w="100%"
-                            size="xl"
-                            variant="outline"
-                            borderRadius="md"
-                            onClick={onGoogleLogin}
-                        >
-                            <Flex align="center" gap={2}>
-                                <Image src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" boxSize="20px" />
-                                <Text>Continue with Google</Text>
-                            </Flex>
-                        </Button>
-
-                        <Button
-                            w="100%"
-                            size="xl"
-                            variant="outline"
-                            borderRadius="md"
-                            onClick={onMicrosoftLogin}
-                        >
-                            <Flex align="center" gap={2}>
-                                <Image src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoft/microsoft-original.svg" boxSize="20px" />
-                                <Text>Continue with Microsoft</Text>
-                            </Flex>
-                        </Button>
+                        <ThirdPartLogin />
                     </Stack>
                 </form>
             </Box>

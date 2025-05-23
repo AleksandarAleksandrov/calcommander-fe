@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Provider as ChakraProvider } from "@/components/ui/provider"
 import { Provider } from 'react-redux';
 import { store } from './store';
@@ -9,12 +10,18 @@ import App from './App';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+console.log(clientId);
+
 root.render(
   <React.StrictMode>
     <ChakraProvider>
-      <Provider store={store}>
-        <App />
-      </Provider>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </GoogleOAuthProvider>
     </ChakraProvider>
   </React.StrictMode>
 );
