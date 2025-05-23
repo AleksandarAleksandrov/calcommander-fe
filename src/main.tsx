@@ -11,9 +11,6 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-console.log(clientId);
-
 root.render(
   <React.StrictMode>
     <ChakraProvider>

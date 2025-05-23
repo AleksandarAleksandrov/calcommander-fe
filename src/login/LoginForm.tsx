@@ -12,7 +12,7 @@ import {
     Field,
 } from '@chakra-ui/react';
 import PlatformLogin from './PlatformLogin';
-import ThirdPartLogin from './ThirdPartLogin';
+import ThirdPartLogin from './ThirdPartyLogin';
 
 interface LoginFormProps {
     onSubmit?: (email: string) => void;
