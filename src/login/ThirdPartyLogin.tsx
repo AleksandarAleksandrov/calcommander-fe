@@ -15,7 +15,8 @@ export default function ThirdPartLogin() {
             const {jwt, expiresAt} = await dispatch(googleOneTapSignInAction({ credential: codeResponse.credential as string }) as any);
             setLocalStorage(jwt, expiresAt);
         },
-        use_fedcm_for_button: true
+        cancel_on_tap_outside: false,
+        // auto_select: true
     });
 
     const googleLogin = useGoogleLogin({
