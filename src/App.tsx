@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider, NavLink, Outlet } from 'react-router-dom';
 import './App.css';
 import LoginPage  from './login/LoginPage';
+import SignupPage from './signup/SignupPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import { clearAuthData } from './utils/auth';
@@ -44,9 +45,14 @@ const Layout = () => {
               </li>
             </>
           ) : (
-            <li>
-              <NavLink to="/login">Login</NavLink>
-            </li>
+            <>
+              <li>
+                <NavLink to="/login">Login</NavLink>
+              </li>
+              <li>
+                <NavLink to="/signup">Sign Up</NavLink>
+              </li>
+            </>
           )}
         </ul>
       </nav>
@@ -83,6 +89,14 @@ const router = createBrowserRouter([
         element: (
           <PublicRoute>
             <LoginPage />
+          </PublicRoute>
+        )
+      },
+      {
+        path: "signup",
+        element: (
+          <PublicRoute>
+            <SignupPage />
           </PublicRoute>
         )
       }
