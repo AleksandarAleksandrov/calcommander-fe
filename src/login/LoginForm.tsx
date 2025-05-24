@@ -1,38 +1,21 @@
-import { useState } from 'react';
 import {
     Box,
-    Button,
     Flex,
-    Input,
     Text,
     Stack,
-    HStack,
-    Image,
-    defineStyle,
-    Field,
+    HStack
 } from '@chakra-ui/react';
 import PlatformLogin from './PlatformLogin';
 import ThirdPartLogin from './ThirdPartyLogin';
+import { useNavigate } from 'react-router-dom';
 
-interface LoginFormProps {
-    onSubmit?: (email: string) => void;
-    onGoogleLogin?: () => void;
-    onMicrosoftLogin?: () => void;
-    onSignUp?: () => void;
-}
-
-export const LoginForm = ({
-    onSubmit,
-    onGoogleLogin,
-    onMicrosoftLogin,
-    onSignUp,
-}: LoginFormProps) => {
-    const [email, setEmail] = useState('');
+export const LoginForm = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit?.(email);
     };
+
+    const navigate = useNavigate();
 
     return (
         <Flex direction="column" align="center" w="100%">
@@ -65,6 +48,7 @@ export const LoginForm = ({
                         </HStack>
 
                         <ThirdPartLogin />
+                        
                     </Stack>
                 </form>
             </Box>
@@ -76,7 +60,7 @@ export const LoginForm = ({
                     color="blue.500"
                     fontWeight="medium"
                     cursor="pointer"
-                    onClick={onSignUp}
+                    onClick={() => navigate("/signup")}
                     display="flex"
                     alignItems="center"
                 >

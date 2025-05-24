@@ -1,5 +1,5 @@
 import type { RootState } from "@/store";
-import { checkUserExistance, loginAction, UserExistence } from "@/store/loginSlice";
+import { checkUserExistance, loginAction, UserExistence, clearLoginState } from "@/store/loginSlice";
 import { Button, Input, Field, Box, defineStyle, Text } from "@chakra-ui/react";
 import { PasswordInput } from "@/components/ui/password-input"
 import { useState } from "react";
@@ -37,8 +37,10 @@ export default function PlatformLogin() {
 
     const navigate = useNavigate();
     if(existanceStatus === UserExistence.NOT_PRESENT) {
+        dispatch(clearLoginState());
         navigate("/signup");
     } else if(existanceStatus === UserExistence.PRESENT_THRU_OAUTH) {
+        dispatch(clearLoginState());
         navigate("/signup/complete-native-auth");
     }
 
@@ -51,10 +53,11 @@ export default function PlatformLogin() {
         }
         if(existanceStatus === UserExistence.PRESENT) {
             const {jwt, expiresAt} = await dispatch(loginAction({ email, password }) as any);
-            
+
             if(jwt && expiresAt) {
                 localStorage.setItem("jwt", jwt);
                 localStorage.setItem("expiresAt", expiresAt);
+                dispatch(clearLoginState());
                 navigate("/");
             }
         }

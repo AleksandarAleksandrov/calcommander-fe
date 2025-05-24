@@ -46,7 +46,11 @@ const loginSlice = createSlice({
     name: 'login',
     initialState: INIT_STATE,
     reducers:{
-        
+        clearLoginState: (state) => {
+            state.existanceStatus = UserExistence.NOT_INITIATED;
+            state.isPlatformContinueLoading = false;
+            state.loginFailed = false;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -100,5 +104,7 @@ export const googleOneTapSignInAction = createApiThunk<{
 export const googleSignInAction = createApiThunk<{
     credential: string;
 }>(GOOGLE_LOGIN, '/sign-in/google', 'POST');
+
+export const { clearLoginState } = loginSlice.actions;
 
 export default loginSlice.reducer;
