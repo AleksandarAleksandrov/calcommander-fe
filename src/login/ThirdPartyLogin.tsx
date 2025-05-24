@@ -4,6 +4,7 @@ import { useGoogleLogin, useGoogleOneTapLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { clearLoginState, googleOneTapSignInAction, googleSignInAction } from "@/store/loginSlice";
 import { useNavigate } from "react-router-dom";
+import { setAuthData } from "@/utils/auth";
 
 export default function ThirdPartLogin() {
 
@@ -28,8 +29,7 @@ export default function ThirdPartLogin() {
 
     const setLocalStorage = (jwt: string, expiresAt: string) => {
         if(jwt && expiresAt) {
-            localStorage.setItem("jwt", jwt);
-            localStorage.setItem("expiresAt", expiresAt);
+            setAuthData(jwt, expiresAt);
             dispatch(clearLoginState());
             navigate("/");
         }

@@ -1,7 +1,11 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider, NavLink, Outlet } from 'react-router-dom';
 import './App.css';
 import LoginPage  from './login/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
+import { clearAuthData } from './utils/auth';
+import { useAuth } from './hooks/useAuth';
 
 // Lazy load components
 const Home = lazy(() => import('./pages/Home'));
@@ -15,19 +19,35 @@ const Loading = () => (
 );
 
 const Layout = () => {
+  const isAuth = useAuth();
+  
+  const handleLogout = () => {
+    clearAuthData();
+  };
+
   return (
     <div className="App">
       <nav>
         <ul>
-          <li>
-            <NavLink to="/">Home</NavLink>
-          </li>
-          <li>
-            <NavLink to="/about">About</NavLink>
-          </li>
-          <li>
-            <NavLink to="/login">Login</NavLink>
-          </li>
+          {isAuth ? (
+            <>
+              <li>
+                <NavLink to="/">Home</NavLink>
+              </li>
+              <li>
+                <NavLink to="/about">About</NavLink>
+              </li>
+              <li>
+                <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', textDecoration: 'underline' }}>
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <li>
+              <NavLink to="/login">Login</NavLink>
+            </li>
+          )}
         </ul>
       </nav>
       <Suspense fallback={<Loading />}>
@@ -44,15 +64,27 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        )
       },
       {
         path: "about",
-        element: <About />
+        element: (
+          <ProtectedRoute>
+            <About />
+          </ProtectedRoute>
+        )
       },
       {
         path: "login",
-        element: <LoginPage />
+        element: (
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        )
       }
     ]
   }

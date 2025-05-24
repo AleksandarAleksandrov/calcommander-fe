@@ -5,6 +5,7 @@ import { PasswordInput } from "@/components/ui/password-input"
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setAuthData } from "@/utils/auth";
 
 const floatingStyles = defineStyle({
     pos: "absolute",
@@ -55,8 +56,7 @@ export default function PlatformLogin() {
             const {jwt, expiresAt} = await dispatch(loginAction({ email, password }) as any);
 
             if(jwt && expiresAt) {
-                localStorage.setItem("jwt", jwt);
-                localStorage.setItem("expiresAt", expiresAt);
+                setAuthData(jwt, expiresAt);
                 dispatch(clearLoginState());
                 navigate("/");
             }
