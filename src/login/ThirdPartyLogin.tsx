@@ -24,7 +24,8 @@ export default function ThirdPartLogin() {
         onSuccess: async (codeResponse) => {
             const {jwt, expiresAt} = await dispatch(googleSignInAction({ credential: codeResponse.access_token as string }) as any);
             setLocalStorage(jwt, expiresAt);
-        }
+        },
+        scope: "email profile https://www.googleapis.com/auth/calendar"
     });
 
     const setLocalStorage = (jwt: string, expiresAt: string) => {

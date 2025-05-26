@@ -10,28 +10,53 @@ import {
   Stack,
   HStack,
   Icon,
-  Link
+  Link,
+  Field,
+  defineStyle,
+  Image
 } from '@chakra-ui/react';
 import { useColorModeValue } from '@/components/ui/color-mode';
-import { FaGoogle, FaMicrosoft, FaCheck } from 'react-icons/fa';
+import { FaGoogle, FaMicrosoft, FaCheck, FaArrowRight } from 'react-icons/fa';
 
 export const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
-  
+
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const headingColor = useColorModeValue('gray.800', 'white');
 
+  const floatingStyles = defineStyle({
+    pos: "absolute",
+    bg: "bg",
+    px: "0.5",
+    top: "-5",
+    insetStart: "2",
+    fontWeight: "normal",
+    pointerEvents: "none",
+    transition: "position",
+    _peerPlaceholderShown: {
+      color: "fg.muted",
+      top: "3.5",
+      insetStart: "3",
+    },
+    _peerFocusVisible: {
+      color: "fg",
+      top: "-3",
+      insetStart: "2",
+    },
+  })
+
+
   return (
     <Box
-    minH="100vh"
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    bg="gray.50"
-    p={4}
-  >
+      minH="100vh"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      bg="gray.50"
+      p={4}
+    >
       <Flex
         direction={{ base: 'column', lg: 'row' }}
         align="stretch"
@@ -62,40 +87,44 @@ export const SignupPage: React.FC = () => {
             </Stack>
 
             <Stack gap={4} align="stretch">
-              <Input
-                placeholder="Enter your email"
-                size="lg"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                bg={useColorModeValue('white', 'gray.700')}
-                border="1px solid"
-                borderColor={useColorModeValue('gray.300', 'gray.600')}
-                _hover={{
-                  borderColor: useColorModeValue('gray.400', 'gray.500')
-                }}
-                _focus={{
-                  borderColor: 'blue.500',
-                  boxShadow: '0 0 0 1px #3182ce'
-                }}
-              />
+              <Field.Root>
+                <Box pos="relative" w="full">
+                  <Input
+                    className='peer'
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder=''
+                    size="xl"
+                    css={{ "--focus-color": "blue" }}
+                    borderRadius="md"
+                    borderColor="gray.300"
+                  />
+                  <Field.Label css={floatingStyles}>Email</Field.Label>
+                </Box>
+              </Field.Root>
 
               <Button
+                type="submit"
+                size="xl"
+                w="100%"
+                borderRadius="md"
                 colorPalette="blue"
-                size="lg"
-                width="full"
-                fontWeight="semibold"
-                _hover={{ transform: 'translateY(-1px)', boxShadow: 'lg' }}
-                transition="all 0.2s"
               >
-                Sign up
+                Continue
               </Button>
             </Stack>
 
             <Stack gap={4}>
-              <Text color={textColor} fontSize="sm" textAlign="center">
-                OR
-              </Text>
-              
+
+              <HStack w="100%" my={2}>
+                <Box flex="1" h="1px" bg="gray.200" />
+                <Text fontSize="sm" color="gray.500" px={2} flexShrink={0}>
+                  OR
+                </Text>
+                <Box flex="1" h="1px" bg="gray.200" />
+              </HStack>
+
               <Text color={textColor} fontSize="sm" textAlign="center" maxW="sm" mx="auto">
                 Easily connect your calendar by signing up with your Google, Microsoft
                 Office 365, or Outlook account.
@@ -103,57 +132,35 @@ export const SignupPage: React.FC = () => {
 
               <Stack gap={3} width="full">
                 <Button
+                  w="100%"
+                  size="xl"
                   variant="outline"
-                  size="lg"
-                  width="full"
-                  fontWeight="medium"
-                  bg="blue.500"
-                  color="white"
-                  border="none"
-                  _hover={{
-                    bg: 'blue.600',
-                    transform: 'translateY(-1px)',
-                    boxShadow: 'md'
-                  }}
-                  transition="all 0.2s"
+                  borderRadius="md"
+                  // colorPalette="blue"
                 >
-                  <Flex align="center" gap={2}>
-                    <Icon as={FaGoogle} />
-                    <Text>Sign up with Google</Text>
+                  <Flex align="center" gap={2} onClick={() => googleLogin()}>
+                    <Image src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" boxSize="20px" />
+                    <Text>Continue with Google</Text>
                   </Flex>
                 </Button>
 
-                <Button
-                  variant="outline"
-                  size="lg"
-                  width="full"
-                  fontWeight="medium"
-                  bg="gray.700"
-                  color="white"
-                  border="none"
-                  _hover={{
-                    bg: 'gray.800',
-                    transform: 'translateY(-1px)',
-                    boxShadow: 'md'
-                  }}
-                  transition="all 0.2s"
-                >
-                  <Flex align="center" gap={2}>
-                    <Icon as={FaMicrosoft} />
-                    <Text>Sign up with Microsoft</Text>
-                  </Flex>
-                </Button>
               </Stack>
 
+              <Flex gap={1} width="full" align="center">
+                <Text color={textColor} fontSize="md" lineHeight="1.6" fontWeight="medium">
+                  Already have an account?
+                </Text>
               <Link
                 color="blue.500"
                 fontSize="sm"
-                fontWeight="medium"
                 _hover={{ textDecoration: 'underline' }}
                 textAlign="center"
+                fontWeight="bold"
               >
-                Log In
-              </Link>
+                  Log In
+                  <Icon as={FaArrowRight} />
+                </Link>
+              </Flex>
             </Stack>
           </Stack>
         </Box>
@@ -175,7 +182,7 @@ export const SignupPage: React.FC = () => {
               >
                 Create your free account
               </Heading>
-              
+
               <Text color={textColor} fontSize="md" lineHeight="1.6">
                 Easily schedule with clients and recruits with a free
                 Calendly account. First-time signups get a free 14-day trial
