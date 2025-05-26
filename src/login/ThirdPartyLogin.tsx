@@ -22,10 +22,12 @@ export default function ThirdPartLogin() {
 
     const googleLogin = useGoogleLogin({
         onSuccess: async (codeResponse) => {
+            console.log(codeResponse);
             const {jwt, expiresAt} = await dispatch(googleSignInAction({ credential: codeResponse.access_token as string }) as any);
             setLocalStorage(jwt, expiresAt);
         },
-        scope: "email profile https://www.googleapis.com/auth/calendar"
+        scope: "email profile https://www.googleapis.com/auth/calendar",
+        flow: 'auth-code'
     });
 
     const setLocalStorage = (jwt: string, expiresAt: string) => {
