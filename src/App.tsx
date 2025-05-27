@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import { clearAuthData } from './utils/auth';
 import { useAuth } from './hooks/useAuth';
+import GoogleRedirect from './login/GoogleRedirect';
 
 // Lazy load components
 const Home = lazy(() => import('./pages/Home'));
@@ -91,6 +92,10 @@ const router = createBrowserRouter([
             <LoginPage />
           </PublicRoute>
         )
+      },
+      {
+        path: "google-callback",
+        element: <GoogleRedirect />
       },
       {
         path: "signup",
