@@ -6,10 +6,10 @@ import {
     HStack
 } from '@chakra-ui/react';
 import PlatformLogin from './PlatformLogin';
-import ThirdPartLogin from './ThirdPartyLogin';
+import SignInWithGoogle from './SignInWithGoogle';
 import { useNavigate } from 'react-router-dom';
 
-export const LoginForm = () => {
+export const SignInForm = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,7 +47,7 @@ export const LoginForm = () => {
                             <Box flex="1" h="1px" bg="gray.200" />
                         </HStack>
 
-                        <ThirdPartLogin />
+                        <SignInWithGoogle />
                         
                     </Stack>
                 </form>

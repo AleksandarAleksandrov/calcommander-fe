@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
-import { LoginForm } from './LoginForm';
+import { SignInForm } from './SignInForm';
 
-export default function LoginPage() {
+export default function SignInPage() {
 
   return (
     <Box
@@ -12,7 +12,7 @@ export default function LoginPage() {
       bg="gray.50"
       p={4}
     >
-      <LoginForm
+      <SignInForm
       />
     </Box>
   );
