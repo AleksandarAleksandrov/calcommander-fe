@@ -36,10 +36,17 @@ export enum UserExistence {
     PRESENT_THRU_OAUTH
 }
 
+export enum RedirectPageStatus {
+    LOADING,
+    SUCCESS,
+    FAILURE
+}
+
 const INIT_STATE = {
     existanceStatus: UserExistence.NOT_INITIATED,
     isPlatformContinueLoading: false,
     loginFailed: false,
+    redirectPageStatus: RedirectPageStatus.LOADING
 };
 
 const loginSlice = createSlice({
@@ -85,6 +92,15 @@ const loginSlice = createSlice({
             .addCase(CHECK_USER_EXISTANCE_FAILURE, (state, action) => {
                 state.isPlatformContinueLoading = false;
             })
+            .addCase(GOOGLE_LOGIN_REQUEST, (state, action) => {
+                state.redirectPageStatus = RedirectPageStatus.LOADING;
+            })
+            .addCase(GOOGLE_LOGIN_SUCCESS, (state, action) => {
+                state.redirectPageStatus = RedirectPageStatus.SUCCESS;
+            })
+            .addCase(GOOGLE_LOGIN_FAILURE, (state, action) => {
+                state.redirectPageStatus = RedirectPageStatus.FAILURE;
+            })
     }
 })
 
@@ -96,10 +112,6 @@ export const loginAction = createApiThunk<{
     email: string;
     password: string;
 }>(LOGIN, '/sign-in', 'POST');
-
-export const googleOneTapSignInAction = createApiThunk<{
-    credential: string;
-}>(GOOGLE_LOGIN, '/sign-in/google/one-tap', 'POST');
 
 export const googleSignInAction = createApiThunk<{
     credential: string;

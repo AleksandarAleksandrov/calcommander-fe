@@ -22,10 +22,6 @@ const Loading = () => (
 const Layout = () => {
   const isAuth = useAuth();
   const navigate = useNavigate();
-  
-  const handleLogout = () => {
-    clearAuthData();
-  };
 
   if(isAuth) {
     navigate ('/');

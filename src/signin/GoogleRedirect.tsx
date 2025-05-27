@@ -1,33 +1,49 @@
-import { googleSignInAction } from '@/store/loginSlice';
-import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { clearLoginState, googleSignInAction, RedirectPageStatus } from '@/store/loginSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import type { RootState } from '@/store';
+import { setAuthData } from '@/utils/auth';
 
 export default function GoogleRedirect() {
-    const [searchParams] = useSearchParams();
-    
-    // Get specific query parameters
-    const code = searchParams.get('code');
-    const state = searchParams.get('state');
-    const error = searchParams.get('error');
-
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const { redirectPageStatus } = useSelector((state: RootState) => state.login);
+    const hasProcessed = useRef(false);
 
-    dispatch(googleSignInAction({ credential: code as string }) as any); 
-    
-    // Get all query parameters as an object
-    const allParams = Object.fromEntries(searchParams);
-    
+    const code = searchParams.get('code');
+    // const state = searchParams.get('state');
+    // const error = searchParams.get('error');
+
+    useEffect(() => {
+        async function handleGoogleSignIn() {
+            if (hasProcessed.current) return;
+            hasProcessed.current = true;
+
+            try {
+                const { jwt, expiresAt } = await dispatch(googleSignInAction({ credential: code as string }) as any);
+
+                setAuthData(jwt, expiresAt);
+                dispatch(clearLoginState());
+                navigate("/");
+            } catch (error) {
+                console.error('Error during Google sign-in:', error);
+                // You might want to dispatch an error action here
+            }
+        }
+
+        if (code && redirectPageStatus === RedirectPageStatus.LOADING && !hasProcessed.current) {
+            handleGoogleSignIn();
+        }
+    }, [code, redirectPageStatus, dispatch, navigate]);
+
     return (
         <div>
-            <h1>Google Redirect</h1>
             <div>
-                <h2>Query Parameters:</h2>
-                <p><strong>Code:</strong> {code || 'Not found'}</p>
-                <p><strong>State:</strong> {state || 'Not found'}</p>
-                <p><strong>Error:</strong> {error || 'Not found'}</p>
-                
-                <h3>All Parameters:</h3>
-                <pre>{JSON.stringify(allParams, null, 2)}</pre>
+                {redirectPageStatus === RedirectPageStatus.LOADING && (
+                    <div>Loading...</div>
+                )}
             </div>
         </div>
     )
