@@ -1,13 +1,13 @@
 import { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider, NavLink, Outlet } from 'react-router-dom';
 import './App.css';
-import LoginPage  from './login/LoginPage';
+import LoginPage  from './signin/LoginPage';
 import SignupPage from './signup/SignupPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import { clearAuthData } from './utils/auth';
 import { useAuth } from './hooks/useAuth';
-import GoogleRedirect from './login/GoogleRedirect';
+import GoogleRedirect from './signin/GoogleRedirect';
 
 // Lazy load components
 const Home = lazy(() => import('./pages/Home'));
