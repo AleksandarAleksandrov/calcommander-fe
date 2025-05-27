@@ -11,21 +11,9 @@ export default function ThirdPartLogin() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    useGoogleOneTapLogin({
-        onSuccess: async (codeResponse) => {
-            const {jwt, expiresAt} = await dispatch(googleOneTapSignInAction({ credential: codeResponse.credential as string }) as any);
-            setLocalStorage(jwt, expiresAt);
-        },
-        cancel_on_tap_outside: false,
-        // auto_select: true
-    });
-
     const googleLogin = useGoogleLogin({
-        onSuccess: async (codeResponse) => {
-            console.log(codeResponse);
-            const {jwt, expiresAt} = await dispatch(googleSignInAction({ credential: codeResponse.access_token as string }) as any);
-            setLocalStorage(jwt, expiresAt);
-        },
+        ux_mode: 'redirect',
+        redirect_uri: 'http://localhost:3000/google-callback',
         scope: "email profile https://www.googleapis.com/auth/calendar",
         flow: 'auth-code'
     });
@@ -45,8 +33,9 @@ export default function ThirdPartLogin() {
                 size="xl"
                 variant="outline"
                 borderRadius="md"
+                onClick={() => googleLogin()}
             >
-                <Flex align="center" gap={2} onClick={() => googleLogin()}>
+                <Flex align="center" gap={2}>
                     <Image src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" boxSize="20px" />
                     <Text>Continue with Google</Text>
                 </Flex>
