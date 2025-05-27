@@ -5,7 +5,7 @@ import {
     Stack,
     HStack
 } from '@chakra-ui/react';
-import PlatformLogin from './PlatformLogin';
+import PlatformLogin from './PlatformSignIn';
 import SignInWithGoogle from './SignInWithGoogle';
 import { useNavigate } from 'react-router-dom';
 

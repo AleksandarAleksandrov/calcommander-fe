@@ -28,7 +28,7 @@ const floatingStyles = defineStyle({
     },
 })
 
-export default function PlatformLogin() {
+export default function PlatformSignIn() {
 
     const { isPlatformContinueLoading } = useSelector((state: RootState) => state.login);
     const { existanceStatus } = useSelector((state: RootState) => state.login);
