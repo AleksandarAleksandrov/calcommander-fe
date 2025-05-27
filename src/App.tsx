@@ -1,12 +1,10 @@
 import { Suspense, lazy } from 'react';
-import { createBrowserRouter, RouterProvider, Outlet, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './App.css';
 import SignInPage  from './signin/SignInPage';
 import SignupPage from './signup/SignupPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
-import { clearAuthData } from './utils/auth';
-import { useAuth } from './hooks/useAuth';
 import GoogleRedirect from './signin/GoogleRedirect';
 
 // Lazy load components
@@ -20,13 +18,6 @@ const Loading = () => (
 );
 
 const Layout = () => {
-  const isAuth = useAuth();
-  const navigate = useNavigate();
-
-  if(isAuth) {
-    navigate ('/');
-  }
-
   return (
       <Suspense fallback={<Loading />}>
         <Outlet />

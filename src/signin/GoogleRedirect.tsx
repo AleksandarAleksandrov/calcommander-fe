@@ -1,7 +1,7 @@
 import { clearLoginState, googleSignInAction, RedirectPageStatus } from '@/store/loginSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import type { RootState } from '@/store';
 import { setAuthData } from '@/utils/auth';
 
@@ -16,27 +16,27 @@ export default function GoogleRedirect() {
     // const state = searchParams.get('state');
     // const error = searchParams.get('error');
 
-    useEffect(() => {
-        async function handleGoogleSignIn() {
-            if (hasProcessed.current) return;
-            hasProcessed.current = true;
+    const handleGoogleSignIn = useCallback(async () => {
+        if (hasProcessed.current) return;
+        hasProcessed.current = true;
 
-            try {
-                const { jwt, expiresAt } = await dispatch(googleSignInAction({ credential: code as string }) as any);
+        try {
+            const { jwt, expiresAt } = await dispatch(googleSignInAction({ credential: code as string }) as any);
 
-                setAuthData(jwt, expiresAt);
-                dispatch(clearLoginState());
-                navigate("/");
-            } catch (error) {
-                console.error('Error during Google sign-in:', error);
-                // You might want to dispatch an error action here
-            }
+            setAuthData(jwt, expiresAt);
+            dispatch(clearLoginState());
+            navigate("/");
+        } catch (error) {
+            console.error('Error during Google sign-in:', error);
+            // You might want to dispatch an error action here
         }
+    }, [code, dispatch, navigate]);
 
+    useEffect(() => {
         if (code && redirectPageStatus === RedirectPageStatus.LOADING && !hasProcessed.current) {
             handleGoogleSignIn();
         }
-    }, [code, redirectPageStatus, dispatch, navigate]);
+    }, [code, redirectPageStatus, handleGoogleSignIn]);
 
     return (
         <div>
