@@ -1,30 +1,15 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useDispatch } from "react-redux";
-import { clearLoginState } from "@/store/loginSlice";
-import { useNavigate } from "react-router-dom";
-import { setAuthData } from "@/utils/auth";
 
 export default function SignInWithGoogle() {
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
     const googleLogin = useGoogleLogin({
         ux_mode: 'redirect',
-        redirect_uri: 'http://localhost:3000/google-callback',
+        redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI,
         scope: "email profile https://www.googleapis.com/auth/calendar",
         flow: 'auth-code'
     });
-
-    const setLocalStorage = (jwt: string, expiresAt: string) => {
-        if(jwt && expiresAt) {
-            setAuthData(jwt, expiresAt);
-            dispatch(clearLoginState());
-            navigate("/");
-        }
-    }   
 
     return (
         <>
