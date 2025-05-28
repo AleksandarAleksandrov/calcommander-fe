@@ -46,7 +46,27 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
 
         const response = await fetch(fullPath, fetchOptions);
         
-        const responseData = await response.json();
+        // Check if response has content before trying to parse JSON
+        let responseData = null;
+        const contentLength = response.headers.get('content-length');
+        const contentType = response.headers.get('content-type');
+        
+        // Only attempt to parse JSON if there's likely to be content
+        if (response.status !== 204 && // No Content
+            contentLength !== '0' && 
+            contentType?.includes('application/json')) {
+          try {
+            const text = await response.text();
+            responseData = text ? JSON.parse(text) : null;
+          } catch (jsonError) {
+            // If JSON parsing fails but response was successful, treat as success with null data
+            if (response.ok) {
+              responseData = null;
+            } else {
+              throw jsonError;
+            }
+          }
+        }
         
         const endTime = performance.now();
         const duration = endTime - startTime;
@@ -55,7 +75,7 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
           throw { 
             status: response.status, 
             data: responseData,
-            message: responseData.message || 'API request failed'
+            message: responseData?.message || 'API request failed'
           };
         }
         

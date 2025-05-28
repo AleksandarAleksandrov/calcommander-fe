@@ -97,6 +97,7 @@ export default function PlatformSignIn() {
                         css={{ "--focus-color": "blue" }}
                         borderRadius="md"
                         borderColor="gray.300"
+                        minLength={6}
                     />
                     <Field.Label css={floatingStyles}>Password</Field.Label>
                 </Box>

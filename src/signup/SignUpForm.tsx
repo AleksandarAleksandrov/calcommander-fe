@@ -7,32 +7,12 @@ import { Icon, Flex } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/react";
 import { FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import PlatformSignUp from "./PlatformSignUp";
 
 export default function SignUpForm() {
 
     const textColor = useColorModeValue('gray.600', 'gray.300');
     const headingColor = useColorModeValue('gray.800', 'white');
-
-    const floatingStyles = defineStyle({
-        pos: "absolute",
-        bg: "bg",
-        px: "0.5",
-        top: "-5",
-        insetStart: "2",
-        fontWeight: "normal",
-        pointerEvents: "none",
-        transition: "position",
-        _peerPlaceholderShown: {
-            color: "fg.muted",
-            top: "3.5",
-            insetStart: "3",
-        },
-        _peerFocusVisible: {
-            color: "fg",
-            top: "-3",
-            insetStart: "2",
-        },
-    })
 
     const navigate = useNavigate();
 
@@ -53,32 +33,7 @@ export default function SignUpForm() {
                     </Text>
                 </Stack>
 
-                <Stack gap={4} align="stretch">
-                    <Field.Root>
-                        <Box pos="relative" w="full">
-                            <Input
-                                className='peer'
-                                type="email"
-                                placeholder=''
-                                size="xl"
-                                css={{ "--focus-color": "blue" }}
-                                borderRadius="md"
-                                borderColor="gray.300"
-                            />
-                            <Field.Label css={floatingStyles}>Email</Field.Label>
-                        </Box>
-                    </Field.Root>
-
-                    <Button
-                        type="submit"
-                        size="xl"
-                        w="100%"
-                        borderRadius="md"
-                        colorPalette="blue"
-                    >
-                        Continue
-                    </Button>
-                </Stack>
+                <PlatformSignUp />
 
                 <Stack gap={4}>
 
@@ -91,7 +46,7 @@ export default function SignUpForm() {
                     </HStack>
 
                     <Text color={textColor} fontSize="sm" textAlign="center" maxW="sm" mx="auto">
-                        Just sign up and sync your calendar — it’s that easy.
+                        Just sign up and sync your calendar - it’s that easy.
                     </Text>
 
                     <Stack gap={3} width="full">
