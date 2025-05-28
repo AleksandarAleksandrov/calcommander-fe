@@ -19,7 +19,7 @@ export default function SignInPage() {
         justifyContent="center"
         alignItems="center"
       >
-        <Image src={womanHoldingPuzzlePiece} alt="logo" />
+        <Image src={womanHoldingPuzzlePiece} maxW="20vw" />
       </Box>
       <Box
         display="flex"
@@ -33,7 +33,7 @@ export default function SignInPage() {
         justifyContent="center"
         alignItems="center"
       >
-        <Image src={manHoldingPuzzlePiece} alt="logo" />
+        <Image src={manHoldingPuzzlePiece} maxW="20vw" />
       </Box>
     </Box>
   );
