@@ -10,12 +10,12 @@ export default function SignInPage() {
     <Box
       minH="100vh"
       display="grid"
-      gridTemplateColumns="1fr 1fr 1fr"
+      gridTemplateColumns={{ base: "1fr", lg: "1fr 1fr 1fr" }}
       bg="gray.50"
       p={4}
     >
       <Box
-        display="flex"
+        display={{ base: "none", lg: "flex" }}
         justifyContent="center"
         alignItems="center"
       >
@@ -29,7 +29,7 @@ export default function SignInPage() {
         <SignInForm />
       </Box>
       <Box 
-        display="flex"
+        display={{ base: "none", lg: "flex" }}
         justifyContent="center"
         alignItems="center"
       >
