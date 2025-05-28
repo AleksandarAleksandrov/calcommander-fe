@@ -17,7 +17,7 @@ export default function SignInPage() {
       <Box
         display="flex"
         justifyContent="center"
-        alignItems="start"
+        alignItems="center"
       >
         <Image src={womanHoldingPuzzlePiece} alt="logo" />
       </Box>
@@ -31,7 +31,7 @@ export default function SignInPage() {
       <Box 
         display="flex"
         justifyContent="center"
-        alignItems="start"
+        alignItems="center"
       >
         <Image src={manHoldingPuzzlePiece} alt="logo" />
       </Box>
