@@ -1,6 +1,8 @@
 import { Box, Image } from '@chakra-ui/react';
 import { SignInForm } from './SignInForm';
-import womanPointingCalendar from '@/assets/images/woman_pointing_at_calendar.png';
+
+import womanHoldingPuzzlePiece from '@/assets/images/woman_holding_puzzle_piece.png';
+import manHoldingPuzzlePiece from '@/assets/images/man_holding_puzzle_piece.png';
 
 export default function SignInPage() {
 
@@ -15,18 +17,24 @@ export default function SignInPage() {
       <Box
         display="flex"
         justifyContent="center"
-        alignItems="center"
+        alignItems="start"
       >
-        <Image src={womanPointingCalendar} alt="logo"/>
+        <Image src={womanHoldingPuzzlePiece} alt="logo" />
       </Box>
       <Box
         display="flex"
         justifyContent="center"
         alignItems="center"
       >
-        <SignInForm/>
+        <SignInForm />
       </Box>
-      <Box />
+      <Box 
+        display="flex"
+        justifyContent="center"
+        alignItems="start"
+      >
+        <Image src={manHoldingPuzzlePiece} alt="logo" />
+      </Box>
     </Box>
   );
 }; 
