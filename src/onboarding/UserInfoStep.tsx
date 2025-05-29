@@ -1,7 +1,9 @@
 import { Button, Stack, Box, Input, Field, defineStyle } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import TimezoneInput from "@/components/TimezoneInput";
-import OnboardingWizardControl from "./OnboardingWizardControl";
+import { useDispatch } from "react-redux";
+import { OnboardingStep } from "@/store/onboardingSlice";
+import { setStep } from "@/store/onboardingSlice";
 
 const floatingStyles = defineStyle({
     bg: "bg",
@@ -24,6 +26,8 @@ const floatingStyles = defineStyle({
 })
 
 export default function UserInfoStep() {
+
+    const dispatch = useDispatch();
 
     return <Stack gap={6}>
         {/* Username Field */}
@@ -73,17 +77,16 @@ export default function UserInfoStep() {
             </Box>
         </Field.Root>
 
-        {/* Timezone Field with Search */}
         <TimezoneInput />
 
-
-        {/* Next Step Button */}
         <Button
             type="submit"
             size="xl"
             w="100%"
             borderRadius="md"
             colorPalette="blue"
+            // TODO: Replace with calendar settings step
+            onClick={() => dispatch(setStep(OnboardingStep.AVAILABILITY))}
         >
             Next Step
             <FiArrowRight />
