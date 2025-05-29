@@ -1,12 +1,47 @@
 import { Button, Stack, Text, Box, Input, Field, defineStyle, Select, Portal, createListCollection } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 
+const getBrowserLocale = () => {
+    console.log(navigator.languages);
+    return navigator.language || 
+           navigator.languages?.[0] || 
+           'en-US';
+};
+
+const getCurrentTimezone = () => {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+};
+
+const getTimezoneDisplayName = (timezone: string, locale: string = 'en-US') => {
+    try {
+        const formatter = new Intl.DateTimeFormat(locale, {
+            timeZoneName: 'long',
+            timeZone: timezone
+        });
+        const parts = formatter.formatToParts(new Date());
+        const timeZoneName = parts.find(part => part.type === 'timeZoneName')?.value;
+        return timeZoneName || timezone;
+    } catch (error) {
+        return timezone;
+    }
+};
+
+const uses12HourFormat = (locale: string) => {
+    // Locales that typically use 12-hour format
+    const twelveHourLocales = ['en-US', 'en-CA', 'en-AU', 'en-NZ', 'en-PH'];
+    return twelveHourLocales.some(l => locale.startsWith(l.split('-')[0]) && 
+                                    (locale === l || locale.startsWith('en')));
+};
+
 const getCurrentTime = () => {
     const now = new Date();
-    return now.toLocaleTimeString('en-US', {
+    const locale = getBrowserLocale();
+    const hour12 = uses12HourFormat(locale);
+    
+    return now.toLocaleTimeString(locale, {
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true,
+        hour12: hour12,
     });
 };
 
@@ -30,39 +65,40 @@ const floatingStyles = defineStyle({
     },
 })
 
-const animeMovies = createListCollection({
+
+console.log(Intl.supportedValuesOf('timeZone'));
+
+const timezones = createListCollection({
     items: [
-        { label: "Spirited Away", value: "spirited_away" },
-        { label: "My Neighbor Totoro", value: "my_neighbor_totoro" },
-        { label: "Akira", value: "akira" },
-        { label: "Princess Mononoke", value: "princess_mononoke" },
-        { label: "Grave of the Fireflies", value: "grave_of_the_fireflies" },
-        { label: "Howl's Moving Castle", value: "howls_moving_castle" },
-        { label: "Ghost in the Shell", value: "ghost_in_the_shell" },
-        { label: "Naruto", value: "naruto" },
-        { label: "Hunter x Hunter", value: "hunter_x_hunter" },
-        { label: "The Wind Rises", value: "the_wind_rises" },
-        { label: "Kiki's Delivery Service", value: "kikis_delivery_service" },
-        { label: "Perfect Blue", value: "perfect_blue" },
-        {
-            label: "The Girl Who Leapt Through Time",
-            value: "the_girl_who_leapt_through_time",
-        },
-        { label: "Weathering with You", value: "weathering_with_you" },
-        { label: "Ponyo", value: "ponyo" },
-        { label: "5 Centimeters per Second", value: "5_centimeters_per_second" },
-        { label: "A Silent Voice", value: "a_silent_voice" },
-        { label: "Paprika", value: "paprika" },
-        { label: "Wolf Children", value: "wolf_children" },
-        { label: "Redline", value: "redline" },
-        {
-            label: "The Tale of the Princess Kaguya",
-            value: "the_tale_of_the_princess_kaguya",
-        },
+        // Major timezones - you can expand this list as needed
+        { label: "Pacific Time (PT)", value: "America/Los_Angeles" },
+        { label: "Mountain Time (MT)", value: "America/Denver" },
+        { label: "Central Time (CT)", value: "America/Chicago" },
+        { label: "Eastern Time (ET)", value: "America/New_York" },
+        { label: "Atlantic Time", value: "America/Halifax" },
+        { label: "Hawaii Time", value: "Pacific/Honolulu" },
+        { label: "Alaska Time", value: "America/Anchorage" },
+        { label: "UTC", value: "UTC" },
+        { label: "London (GMT/BST)", value: "Europe/London" },
+        { label: "Paris (CET/CEST)", value: "Europe/Paris" },
+        { label: "Berlin (CET/CEST)", value: "Europe/Berlin" },
+        { label: "Tokyo (JST)", value: "Asia/Tokyo" },
+        { label: "Sydney (AEST/AEDT)", value: "Australia/Sydney" },
+        { label: "Mumbai (IST)", value: "Asia/Kolkata" },
+        { label: "Dubai (GST)", value: "Asia/Dubai" },
+        { label: "Shanghai (CST)", value: "Asia/Shanghai" },
+        { label: "Singapore (SGT)", value: "Asia/Singapore" },
+        { label: "Seoul (KST)", value: "Asia/Seoul" },
     ],
-})
+});
 
 export default function UserInfoStep() {
+    const currentTimezone = getCurrentTimezone();
+    const locale = getBrowserLocale();
+    
+    // Check if current timezone exists in our list, otherwise use it as default
+    const defaultTimezone = timezones.items.find(tz => tz.value === currentTimezone)?.value || currentTimezone;
+
     return <Stack gap={6}>
         {/* Username Field */}
         <Field.Root>
@@ -113,8 +149,8 @@ export default function UserInfoStep() {
 
         {/* Timezone Field */}
         <Select.Root
-            collection={animeMovies}
-            defaultValue={["spirited_away"]}
+            collection={timezones}
+            defaultValue={[defaultTimezone]}
             className='peer'
             size="lg"
             css={{ "--focus-color": "blue" }}
@@ -122,10 +158,10 @@ export default function UserInfoStep() {
             borderColor="gray.300"
         >
             <Select.HiddenSelect />
-            <Select.Label>Select fav. anime</Select.Label>
+            <Select.Label>Timezone</Select.Label>
             <Select.Control>
                 <Select.Trigger>
-                    <Select.ValueText placeholder="Select anime" />
+                    <Select.ValueText placeholder="Select timezone" />
                 </Select.Trigger>
                 <Select.IndicatorGroup>
                     <Select.ClearTrigger />
@@ -135,15 +171,18 @@ export default function UserInfoStep() {
             <Portal>
                 <Select.Positioner>
                     <Select.Content>
-                        {animeMovies.items.map((anime) => (
-                            <Select.Item item={anime} key={anime.value}>
-                                {anime.label}
+                        {timezones.items.map((timezone) => (
+                            <Select.Item item={timezone} key={timezone.value}>
+                                {timezone.label}
                                 <Select.ItemIndicator />
                             </Select.Item>
                         ))}
                     </Select.Content>
                 </Select.Positioner>
             </Portal>
+        <Text fontSize="xs" color="gray.500" mt={1}>
+        Detected timezone: {getTimezoneDisplayName(currentTimezone, locale)}
+        </Text>
         <Text fontSize="xs" color="gray.500" mt={1}>
             Current time {getCurrentTime()}
         </Text>
