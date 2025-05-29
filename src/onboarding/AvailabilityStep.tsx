@@ -1,6 +1,6 @@
 import { Box, Text, Stack, Input, Button, IconButton, Switch, Select, createListCollection, Portal } from "@chakra-ui/react";
 import { useState } from "react";
-import { FiPlus, FiCopy } from "react-icons/fi";
+import { FiPlus, FiCopy, FiX } from "react-icons/fi";
 
 interface TimeSlot {
     startTime: string;
@@ -39,8 +39,6 @@ export default function AvailabilityStep() {
         Saturday: { enabled: false, timeSlots: [] },
         Sunday: { enabled: false, timeSlots: [] }
     });
-
-    const [selectedDay, setSelectedDay] = useState<string>('Friday');
 
     const handleDayToggle = (day: string) => {
         setAvailability(prev => ({
@@ -83,6 +81,16 @@ export default function AvailabilityStep() {
             [day]: {
                 ...prev[day],
                 timeSlots: [...prev[day].timeSlots, { ...timeSlot }]
+            }
+        }));
+    };
+
+    const deleteTimeSlot = (day: string, slotIndex: number) => {
+        setAvailability(prev => ({
+            ...prev,
+            [day]: {
+                ...prev[day],
+                timeSlots: prev[day].timeSlots.filter((_, index) => index !== slotIndex)
             }
         }));
     };
@@ -214,6 +222,20 @@ export default function AvailabilityStep() {
                                         >
                                             <FiPlus />
                                         </IconButton>
+
+                                        <IconButton
+                                            aria-label="Delete time slot"
+                                            size="sm"
+                                            disabled={availability[day].timeSlots.length === 1}
+                                            variant="ghost"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                deleteTimeSlot(day, slotIndex);
+                                            }}
+                                        >
+                                            <FiX />
+                                        </IconButton>
+                                        
                                         <IconButton
                                             aria-label="Copy time slot"
                                             size="sm"

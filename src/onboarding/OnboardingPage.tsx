@@ -14,13 +14,13 @@ export default function OnboardingPage() {
         <Box minH="100vh" bg="gray.50" display="flex" flexDirection="column">
             {/* Main Content */}
             <Box flex="1" display="flex" alignItems="flex-start" justifyContent="center" py={8}>
-                <Box w="full" maxW="550px" mx={4}>
+                <Box w="full" maxW="600px" mx={4}>
 
                     {step === OnboardingStep.USER_INFO && <UserInfoHeader step={step} />}
 
                     <OnboardingWizardControl step={step} />
 
-                    <Box bg="white" p={8} borderRadius="lg" shadow="sm">
+                    <Box bg="white" p={6} borderRadius="lg" shadow="sm">
                         {step === OnboardingStep.USER_INFO && <UserInfoStep />}
                         {step === OnboardingStep.AVAILABILITY && <AvailabilityStep />}
                     </Box>
