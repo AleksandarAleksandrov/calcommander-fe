@@ -1,4 +1,4 @@
-import { Box, Text, Stack, Button, IconButton, Switch, Select, createListCollection, Portal } from "@chakra-ui/react";
+import { Box, Text, Stack, Button, IconButton, Switch, Select, createListCollection, Portal, Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiPlus, FiCopy, FiX } from "react-icons/fi";
 
@@ -96,6 +96,12 @@ export default function AvailabilityStep() {
         Saturday: { enabled: false, timeSlots: [] },
         Sunday: { enabled: false, timeSlots: [] }
     });
+
+    const [copyDialog, setCopyDialog] = useState<{ isOpen: boolean; sourceDay: string; position?: { top: number; left: number } }>({
+        isOpen: false,
+        sourceDay: ''
+    });
+    const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
     const handleDayToggle = (day: string) => {
         setAvailability(prev => ({
@@ -198,6 +204,47 @@ export default function AvailabilityStep() {
                 timeSlots: prev[day].timeSlots.filter((_, index) => index !== slotIndex)
             }
         }));
+    };
+
+    const openCopyDialog = (sourceDay: string, event: React.MouseEvent) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setCopyDialog({ 
+            isOpen: true, 
+            sourceDay,
+            position: {
+                top: rect.bottom + window.scrollY + 8,
+                left: rect.left + window.scrollX
+            }
+        });
+        setSelectedDays([]);
+    };
+
+    const closeCopyDialog = () => {
+        setCopyDialog({ isOpen: false, sourceDay: '', position: undefined });
+        setSelectedDays([]);
+    };
+
+    const handleDaySelection = (day: string, checked: boolean) => {
+        if (checked) {
+            setSelectedDays(prev => [...prev, day]);
+        } else {
+            setSelectedDays(prev => prev.filter(d => d !== day));
+        }
+    };
+
+    const executeCopy = () => {
+        const sourceSlots = availability[copyDialog.sourceDay].timeSlots;
+        setAvailability(prev => {
+            const updated = { ...prev };
+            selectedDays.forEach(day => {
+                updated[day] = {
+                    enabled: true,
+                    timeSlots: [...sourceSlots]
+                };
+            });
+            return updated;
+        });
+        closeCopyDialog();
     };
 
     return (
@@ -357,6 +404,7 @@ export default function AvailabilityStep() {
                                             visibility={slotIndex === 0 ? "visible" : "hidden"}
                                             onClick={(e) => {
                                                 e.stopPropagation();
+                                                openCopyDialog(day, e);
                                             }}
                                         >
                                             <FiCopy />
@@ -378,6 +426,76 @@ export default function AvailabilityStep() {
             >
                 Next Step →
             </Button>
+
+            {/* Copy Dropdown */}
+            {copyDialog.isOpen && (
+                <Portal>
+                    <Box
+                        position="fixed"
+                        top="0"
+                        left="0"
+                        right="0"
+                        bottom="0"
+                        zIndex={1400}
+                        onClick={closeCopyDialog}
+                    />
+                    <Box
+                        position="fixed"
+                        top={`${copyDialog.position?.top}px`}
+                        left={`${copyDialog.position?.left}px`}
+                        bg="white"
+                        borderRadius="lg"
+                        border="1px solid"
+                        borderColor="gray.200"
+                        p={4}
+                        boxShadow="lg"
+                        minW="250px"
+                        zIndex={1500}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Text fontSize="sm" fontWeight="semibold" mb={3}>
+                            Copy timeslots to:
+                        </Text>
+                        <Stack gap={2} mb={4}>
+                            {DAYS.map((day) => (
+                                <Checkbox.Root
+                                    key={day}
+                                    disabled={day === copyDialog.sourceDay}
+                                    checked={selectedDays.includes(day)}
+                                    onCheckedChange={(details) => handleDaySelection(day, !!details.checked)}
+                                    size="sm"
+                                >
+                                    <Checkbox.HiddenInput />
+                                    <Checkbox.Control />
+                                    <Checkbox.Label
+                                        fontSize="sm"
+                                        color={day === copyDialog.sourceDay ? "gray.400" : "gray.800"}
+                                    >
+                                        {day}
+                                    </Checkbox.Label>
+                                </Checkbox.Root>
+                            ))}
+                        </Stack>
+                        <Stack direction="row" gap={2} justify="flex-end">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={closeCopyDialog}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                size="sm"
+                                colorPalette="blue"
+                                disabled={selectedDays.length === 0}
+                                onClick={executeCopy}
+                            >
+                                Copy
+                            </Button>
+                        </Stack>
+                    </Box>
+                </Portal>
+            )}
         </Stack>
     );
 }   
