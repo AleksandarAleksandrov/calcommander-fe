@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './App.css';
 import SignInPage  from './signin/SignInPage';
 import SignupPage from './signup/SignupPage';
+import { OnboardingPage } from './onboarding';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import GoogleRedirect from './signin/GoogleRedirect';
@@ -59,6 +60,14 @@ const router = createBrowserRouter([
         element: (
           <PublicRoute>
             <SignupPage />
+          </PublicRoute>
+        )
+      },
+      {
+        path: "onboarding",
+        element: (
+          <PublicRoute>
+            <OnboardingPage />
           </PublicRoute>
         )
       }
