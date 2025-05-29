@@ -9,7 +9,7 @@ export default function OnboardingWizardControl({ step }: { step: OnboardingStep
             </Text>
             <Box w="full" h="2" bg="gray.200" borderRadius="full">
                 <Box
-                    w="25%"
+                    w={`${((Object.keys(OnboardingStep).indexOf(step) + 1) / (Object.keys(OnboardingStep).length)) * 100}%`}
                     h="full"
                     bg="blue.500"
                     borderRadius="full"
