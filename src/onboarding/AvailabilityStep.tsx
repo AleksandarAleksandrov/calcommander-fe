@@ -1,15 +1,15 @@
-import { Box, Text, Stack, Input, Button, IconButton } from "@chakra-ui/react";
+import { Box, Text, Stack, Input, Button, IconButton, Switch } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiPlus, FiCopy } from "react-icons/fi";
 
 interface TimeSlot {
-  startTime: string;
-  endTime: string;
+    startTime: string;
+    endTime: string;
 }
 
 interface DayAvailability {
-  enabled: boolean;
-  timeSlots: TimeSlot[];
+    enabled: boolean;
+    timeSlots: TimeSlot[];
 }
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -72,121 +72,104 @@ export default function AvailabilityStep() {
     };
 
     return (
-            <Stack gap={4}>
-                {DAYS.map((day) => (
-                    <Box
-                        key={day}
-                        p={4}
-                        borderRadius="lg"
-                        border="1px solid"
-                        borderColor={availability[day].enabled ? "gray.100" : "gray.200"}
-                        cursor="pointer"
-                    >
-                        <Stack direction="row" gap={4} align="flex-start">
-                            <Stack direction="row" gap={4} align="center">
-                                {/* Custom Switch Toggle */}
-                                <Box
-                                    as="button"
-                                    w="12"
-                                    h="6"
-                                    bg={availability[day].enabled ? "blue.500" : "gray.300"}
-                                    borderRadius="full"
-                                    position="relative"
-                                    transition="all 0.2s"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDayToggle(day);
-                                    }}
-                                    _focus={{ outline: "2px solid", outlineColor: "blue.300" }}
-                                >
-                                    <Box
-                                        w="5"
-                                        h="5"
-                                        bg="white"
-                                        borderRadius="full"
-                                        position="absolute"
-                                        top="0.5"
-                                        left={availability[day].enabled ? "6" : "0.5"}
-                                        transition="all 0.2s"
-                                        boxShadow="sm"
-                                    />
-                                </Box>
-                                
-                                <Text
-                                    fontSize="md"
-                                    fontWeight="medium"
-                                    width="90px"
-                                    color={availability[day].enabled ? "gray.800" : "gray.400"}
-                                >
-                                    {day}
-                                </Text>
-                            </Stack>
-                            
-                            {availability[day].enabled && (
-                                <Stack gap={2} align="stretch" flex={1}>
-                                    {availability[day].timeSlots.map((slot, slotIndex) => (
-                                        <Stack key={slotIndex} direction="row" gap={3} align="center">
-                                            <Input
-                                                value={slot.startTime}
-                                                onChange={(e) => handleTimeChange(day, slotIndex, 'startTime', e.target.value)}
-                                                size="md"
-                                                textAlign="center"
-                                                border="1px solid"
-                                                borderColor="gray.300"
-                                                borderRadius="md"
-                                            />
-                                            <Text color="gray.500" fontSize="lg">–</Text>
-                                            <Input
-                                                value={slot.endTime}
-                                                onChange={(e) => handleTimeChange(day, slotIndex, 'endTime', e.target.value)}
-                                                size="md"
-                                                textAlign="center"
-                                                border="1px solid"
-                                                borderColor="gray.300"
-                                                borderRadius="md"
-                                            />
-                                            <IconButton
-                                                aria-label="Add time slot"
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    addTimeSlot(day);
-                                                }}
-                                            >
-                                                <FiPlus />
-                                            </IconButton>
-                                            <IconButton
-                                                aria-label="Copy time slot"
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    copyTimeSlot(day, slotIndex);
-                                                }}
-                                            >
-                                                <FiCopy />
-                                            </IconButton>
-                                        </Stack>
-                                    ))}
-                                </Stack>
-                            )}
-                        </Stack>
-                    </Box>
-                ))}
-                
-                <Button
-                    size="lg"
-                    bg="gray.800"
-                    color="white"
-                    mt={6}
-                    py={6}
-                    fontSize="lg"
-                    fontWeight="medium"
-                    _hover={{ bg: "gray.700" }}
+        <Stack gap={4}>
+            {DAYS.map((day) => (
+                <Box
+                    key={day}
+                    p={4}
+                    borderRadius="lg"
+                    border="1px solid"
+                    borderColor={availability[day].enabled ? "gray.100" : "gray.200"}
+                    cursor="pointer"
                 >
-                    Next Step →
-                </Button>
-            </Stack>
+                    <Stack direction="row" gap={4} align="flex-start">
+                        <Stack direction="row" gap={4} align="center">
+                            {/* Custom Switch Toggle */}
+
+                            <Switch.Root checked={availability[day].enabled}
+                                
+                                onCheckedChange={({ checked }) => {
+                                    handleDayToggle(day);
+                                }}>
+                                <Switch.HiddenInput />
+                                <Switch.Control />
+                            </Switch.Root>
+
+                            <Text
+                                fontSize="md"
+                                fontWeight="medium"
+                                width="90px"
+                                color={availability[day].enabled ? "gray.800" : "gray.400"}
+                            >
+                                {day}
+                            </Text>
+                        </Stack>
+
+                        {availability[day].enabled && (
+                            <Stack gap={2} align="stretch" flex={1}>
+                                {availability[day].timeSlots.map((slot, slotIndex) => (
+                                    <Stack key={slotIndex} direction="row" gap={3} align="center">
+                                        <Input
+                                            value={slot.startTime}
+                                            onChange={(e) => handleTimeChange(day, slotIndex, 'startTime', e.target.value)}
+                                            size="md"
+                                            textAlign="center"
+                                            border="1px solid"
+                                            borderColor="gray.300"
+                                            borderRadius="md"
+                                        />
+                                        <Text color="gray.500" fontSize="lg">–</Text>
+                                        <Input
+                                            value={slot.endTime}
+                                            onChange={(e) => handleTimeChange(day, slotIndex, 'endTime', e.target.value)}
+                                            size="md"
+                                            textAlign="center"
+                                            border="1px solid"
+                                            borderColor="gray.300"
+                                            borderRadius="md"
+                                        />
+                                        <IconButton
+                                            aria-label="Add time slot"
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addTimeSlot(day);
+                                            }}
+                                        >
+                                            <FiPlus />
+                                        </IconButton>
+                                        <IconButton
+                                            aria-label="Copy time slot"
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                copyTimeSlot(day, slotIndex);
+                                            }}
+                                        >
+                                            <FiCopy />
+                                        </IconButton>
+                                    </Stack>
+                                ))}
+                            </Stack>
+                        )}
+                    </Stack>
+                </Box>
+            ))}
+
+            <Button
+                size="lg"
+                bg="gray.800"
+                color="white"
+                mt={6}
+                py={6}
+                fontSize="lg"
+                fontWeight="medium"
+                _hover={{ bg: "gray.700" }}
+            >
+                Next Step →
+            </Button>
+        </Stack>
     );
 }   
