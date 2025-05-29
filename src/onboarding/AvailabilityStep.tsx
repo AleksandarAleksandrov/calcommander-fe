@@ -38,13 +38,13 @@ const timeToMinutes = (timeString: string): number => {
 const createStartTimeCollection = (endTime: string, timeSlots: TimeSlot[], currentSlotIndex: number) => {
     const endTimeMinutes = timeToMinutes(endTime);
     let minStartTimeMinutes = 0; // Default to start of day
-    
+
     // If this is not the first slot, start time must be after the previous slot's end time
     if (currentSlotIndex > 0) {
         const previousSlot = timeSlots[currentSlotIndex - 1];
         minStartTimeMinutes = timeToMinutes(previousSlot.endTime);
     }
-    
+
     const filteredOptions = TIME_OPTIONS.filter(option => {
         const optionMinutes = timeToMinutes(option.value);
         return optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
@@ -55,7 +55,7 @@ const createStartTimeCollection = (endTime: string, timeSlots: TimeSlot[], curre
 // Helper function to create filtered time options for end time (after start time)
 const createEndTimeCollection = (startTime: string) => {
     const startTimeMinutes = timeToMinutes(startTime);
-    const filteredOptions = TIME_OPTIONS.filter(option => 
+    const filteredOptions = TIME_OPTIONS.filter(option =>
         timeToMinutes(option.value) > startTimeMinutes
     );
     return createListCollection({ items: filteredOptions });
@@ -65,13 +65,13 @@ const createEndTimeCollection = (startTime: string) => {
 const getFilteredStartTimeOptions = (endTime: string, timeSlots: TimeSlot[], currentSlotIndex: number) => {
     const endTimeMinutes = timeToMinutes(endTime);
     let minStartTimeMinutes = 0; // Default to start of day
-    
+
     // If this is not the first slot, start time must be after the previous slot's end time
     if (currentSlotIndex > 0) {
         const previousSlot = timeSlots[currentSlotIndex - 1];
         minStartTimeMinutes = timeToMinutes(previousSlot.endTime);
     }
-    
+
     return TIME_OPTIONS.filter(option => {
         const optionMinutes = timeToMinutes(option.value);
         return optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
@@ -81,7 +81,7 @@ const getFilteredStartTimeOptions = (endTime: string, timeSlots: TimeSlot[], cur
 // Helper function to get filtered end time options for rendering
 const getFilteredEndTimeOptions = (startTime: string) => {
     const startTimeMinutes = timeToMinutes(startTime);
-    return TIME_OPTIONS.filter(option => 
+    return TIME_OPTIONS.filter(option =>
         timeToMinutes(option.value) > startTimeMinutes
     );
 };
@@ -110,18 +110,18 @@ export default function AvailabilityStep() {
 
     const handleTimeChange = (day: string, slotIndex: number, field: 'startTime' | 'endTime', value: string[]) => {
         const selectedValue = value[0]; // Extract the first (and only) value from the array
-        
+
         setAvailability(prev => {
             const currentSlot = prev[day].timeSlots[slotIndex];
             const timeSlots = prev[day].timeSlots;
             let newStartTime = currentSlot.startTime;
             let newEndTime = currentSlot.endTime;
-            
+
             if (field === 'startTime') {
                 newStartTime = selectedValue;
                 // If new start time is >= current end time, set end time to next available slot
                 if (timeToMinutes(selectedValue) >= timeToMinutes(currentSlot.endTime)) {
-                    const nextTimeOptions = TIME_OPTIONS.filter(option => 
+                    const nextTimeOptions = TIME_OPTIONS.filter(option =>
                         timeToMinutes(option.value) > timeToMinutes(selectedValue)
                     );
                     if (nextTimeOptions.length > 0) {
@@ -139,7 +139,7 @@ export default function AvailabilityStep() {
                     }
                 }
             }
-            
+
             return {
                 ...prev,
                 [day]: {
@@ -157,21 +157,21 @@ export default function AvailabilityStep() {
             const existingSlots = prev[day].timeSlots;
             let defaultStartTime = '09:00';
             let defaultEndTime = '17:00';
-            
+
             // If there are existing slots, set start time after the last slot's end time
             if (existingSlots.length > 0) {
                 const lastSlot = existingSlots[existingSlots.length - 1];
                 const lastEndTimeMinutes = timeToMinutes(lastSlot.endTime);
-                
+
                 // Find the next available time slot after the last end time
-                const availableStartTimes = TIME_OPTIONS.filter(option => 
+                const availableStartTimes = TIME_OPTIONS.filter(option =>
                     timeToMinutes(option.value) > lastEndTimeMinutes
                 );
-                
+
                 if (availableStartTimes.length > 0) {
                     defaultStartTime = availableStartTimes[0].value;
                     // Set end time to at least one slot after start time
-                    const availableEndTimes = TIME_OPTIONS.filter(option => 
+                    const availableEndTimes = TIME_OPTIONS.filter(option =>
                         timeToMinutes(option.value) > timeToMinutes(defaultStartTime)
                     );
                     if (availableEndTimes.length > 0) {
@@ -179,7 +179,7 @@ export default function AvailabilityStep() {
                     }
                 }
             }
-            
+
             return {
                 ...prev,
                 [day]: {
@@ -327,13 +327,15 @@ export default function AvailabilityStep() {
                                                 </Select.Positioner>
                                             </Portal>
                                         </Select.Root>
+
                                         <IconButton
                                             aria-label="Add time slot"
                                             size="sm"
                                             variant="ghost"
+                                            visibility={slotIndex === availability[day].timeSlots.length - 1 ? "visible" : "hidden"}
                                             disabled={(() => {
                                                 const lastSlot = availability[day].timeSlots[availability[day].timeSlots.length - 1];
-                                                const availableAfterLastSlot = TIME_OPTIONS.filter(option => 
+                                                const availableAfterLastSlot = TIME_OPTIONS.filter(option =>
                                                     timeToMinutes(option.value) > timeToMinutes(lastSlot.endTime)
                                                 );
                                                 return availableAfterLastSlot.length < 2; // Need at least 2 slots (start + end)
@@ -358,7 +360,7 @@ export default function AvailabilityStep() {
                                         >
                                             <FiX />
                                         </IconButton>
-                                        
+
                                         <IconButton
                                             aria-label="Copy time slot"
                                             size="sm"
