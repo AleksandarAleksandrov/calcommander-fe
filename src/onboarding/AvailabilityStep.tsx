@@ -86,9 +86,10 @@ export default function AvailabilityStep() {
                         <Stack direction="row" gap={4} align="center">
                             {/* Custom Switch Toggle */}
 
-                            <Switch.Root checked={availability[day].enabled}
-                                
-                                onCheckedChange={({ checked }) => {
+                            <Switch.Root 
+                                checked={availability[day].enabled}
+                                colorPalette="blue"
+                                onCheckedChange={() => {
                                     handleDayToggle(day);
                                 }}>
                                 <Switch.HiddenInput />
