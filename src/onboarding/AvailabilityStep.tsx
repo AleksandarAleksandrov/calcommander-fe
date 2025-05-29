@@ -208,13 +208,25 @@ export default function AvailabilityStep() {
 
     const openCopyDialog = (sourceDay: string, event: React.MouseEvent) => {
         const rect = event.currentTarget.getBoundingClientRect();
+        const dropdownWidth = 250; // minW of dropdown
+        const dropdownHeight = 300; // estimated height
+        
+        let top = rect.bottom + 8;
+        let left = rect.left;
+        
+        // Ensure dropdown doesn't go off screen
+        if (left + dropdownWidth > window.innerWidth) {
+            left = window.innerWidth - dropdownWidth - 16; // 16px margin
+        }
+        
+        if (top + dropdownHeight > window.innerHeight) {
+            top = rect.top - dropdownHeight - 8; // Position above if no space below
+        }
+        
         setCopyDialog({ 
             isOpen: true, 
             sourceDay,
-            position: {
-                top: rect.bottom + window.scrollY + 8,
-                left: rect.left + window.scrollX
-            }
+            position: { top, left }
         });
         setSelectedDays([]);
     };
@@ -454,18 +466,19 @@ export default function AvailabilityStep() {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <Text fontSize="sm" fontWeight="semibold" mb={3}>
-                            Copy timeslots to:
+                            Copy availability to
                         </Text>
                         <Stack gap={2} mb={4}>
                             {DAYS.map((day) => (
                                 <Checkbox.Root
+                                    colorPalette="blue"
                                     key={day}
                                     disabled={day === copyDialog.sourceDay}
                                     checked={selectedDays.includes(day)}
                                     onCheckedChange={(details) => handleDaySelection(day, !!details.checked)}
                                     size="sm"
                                 >
-                                    <Checkbox.HiddenInput />
+                                    <Checkbox.HiddenInput color="blue" />
                                     <Checkbox.Control />
                                     <Checkbox.Label
                                         fontSize="sm"
@@ -476,21 +489,23 @@ export default function AvailabilityStep() {
                                 </Checkbox.Root>
                             ))}
                         </Stack>
-                        <Stack direction="row" gap={2} justify="flex-end">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={closeCopyDialog}
-                            >
-                                Cancel
-                            </Button>
+                        <Stack direction="row" gap={2} justify="space-between">
                             <Button
                                 size="sm"
                                 colorPalette="blue"
+                                borderRadius="md"
                                 disabled={selectedDays.length === 0}
                                 onClick={executeCopy}
                             >
                                 Copy
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                borderRadius="md"
+                                onClick={closeCopyDialog}
+                            >
+                                Cancel
                             </Button>
                         </Stack>
                     </Box>
