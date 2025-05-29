@@ -47,7 +47,10 @@ const createStartTimeCollection = (endTime: string, timeSlots: TimeSlot[], curre
 
     const filteredOptions = TIME_OPTIONS.filter(option => {
         const optionMinutes = timeToMinutes(option.value);
-        return optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
+        // For the first slot (currentSlotIndex === 0), allow 00:00 by using >= instead of >
+        return currentSlotIndex === 0 
+            ? optionMinutes >= minStartTimeMinutes && optionMinutes < endTimeMinutes
+            : optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
     });
     return createListCollection({ items: filteredOptions });
 };
@@ -74,7 +77,10 @@ const getFilteredStartTimeOptions = (endTime: string, timeSlots: TimeSlot[], cur
 
     return TIME_OPTIONS.filter(option => {
         const optionMinutes = timeToMinutes(option.value);
-        return optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
+        // For the first slot (currentSlotIndex === 0), allow 00:00 by using >= instead of >
+        return currentSlotIndex === 0 
+            ? optionMinutes >= minStartTimeMinutes && optionMinutes < endTimeMinutes
+            : optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
     });
 };
 
