@@ -15,6 +15,10 @@ import {
 import { FiArrowRight } from 'react-icons/fi';
 import UserInfoStep from './UserInfoStep';
 import OnboardingWizardControl from './OnboardingWizardControl';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store';
+import { OnboardingStep } from '@/store/onboardingSlice';
+import UserInfoHeader from './UserInfoHeader';
 
 const floatingStyles = defineStyle({
     pos: "absolute",
@@ -37,37 +41,25 @@ const floatingStyles = defineStyle({
     },
 });
 
-const OnboardingPage: React.FC = () => {
+export default function OnboardingPage() {
 
+    const step = useSelector((state: RootState) => state.onboarding.step);
 
     return (
         <Box minH="100vh" bg="gray.50" display="flex" flexDirection="column">
             {/* Main Content */}
             <Box flex="1" display="flex" alignItems="flex-start" justifyContent="center" py={8}>
                 <Box w="full" maxW="500px" mx={4}>
-                    {/* Progress Indicator */}
-                    <Stack gap={4} align="center" mb={8}>
-                        <Heading size="3xl" color="gray.900" textAlign="center">
-                            Welcome to {import.meta.env.VITE_APP_NAME}!
-                        </Heading>
-                    </Stack>
-                    <Stack gap={4} align="center" mb={8}>
-                        <Text fontSize="sm" color="gray.600" textAlign="left" lineHeight="tall">
-                            We just need some basic info to get your profile setup.
-                            <br />
-                            You'll be able to edit this later.
-                        </Text>
-                    </Stack>
 
-                    <OnboardingWizardControl />
+                    {step === OnboardingStep.USER_INFO && <UserInfoHeader step={step} />}
+
+                    <OnboardingWizardControl step={step} />
 
                     <Box bg="white" p={8} borderRadius="lg" shadow="sm">
-                        <UserInfoStep />
+                        {step === OnboardingStep.USER_INFO && <UserInfoStep />}
                     </Box>
                 </Box>
             </Box>
         </Box>
     );
 };
-
-export default OnboardingPage; 

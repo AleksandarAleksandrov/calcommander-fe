@@ -1,10 +1,11 @@
 import { Box, Text, Stack } from "@chakra-ui/react";
+import { OnboardingStep } from "@/store/onboardingSlice";
 
-export default function OnboardingWizardControl() {
+export default function OnboardingWizardControl({ step }: { step: OnboardingStep }) {
     return <>
         <Stack gap={2} mb={6}>
             <Text fontSize="sm" color="gray.600" alignSelf="flex-start">
-                Step 1 of 4
+                Step {Object.keys(OnboardingStep).indexOf(step) + 1} of {Object.keys(OnboardingStep).length}
             </Text>
             <Box w="full" h="2" bg="gray.200" borderRadius="full">
                 <Box
