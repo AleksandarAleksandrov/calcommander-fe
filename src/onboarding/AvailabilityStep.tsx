@@ -210,21 +210,21 @@ export default function AvailabilityStep() {
         const rect = event.currentTarget.getBoundingClientRect();
         const dropdownWidth = 250; // minW of dropdown
         const dropdownHeight = 300; // estimated height
-        
+
         let top = rect.bottom + 8;
         let left = rect.left;
-        
+
         // Ensure dropdown doesn't go off screen
         if (left + dropdownWidth > window.innerWidth) {
             left = window.innerWidth - dropdownWidth - 16; // 16px margin
         }
-        
+
         if (top + dropdownHeight > window.innerHeight) {
             top = rect.top - dropdownHeight - 8; // Position above if no space below
         }
-        
-        setCopyDialog({ 
-            isOpen: true, 
+
+        setCopyDialog({
+            isOpen: true,
             sourceDay,
             position: { top, left }
         });
@@ -429,15 +429,26 @@ export default function AvailabilityStep() {
                 </Box>
             ))}
 
-            <Button
-                type="submit"
-                size="xl"
-                w="100%"
-                borderRadius="md"
-                colorPalette="blue"
-            >
-                Next Step →
-            </Button>
+            <Stack direction="row" gap={4} w="100%">
+                <Button
+                    size="xl"
+                    variant="outline"
+                    borderRadius="md"
+                    flex="0 0 auto"
+                    minW="120px"
+                >
+                    Back
+                </Button>
+                <Button
+                    type="submit"
+                    size="xl"
+                    borderRadius="md"
+                    colorPalette="blue"
+                    flex="1"
+                >
+                    Next Step →
+                </Button>
+            </Stack>
 
             {/* Copy Dropdown */}
             {copyDialog.isOpen && (
