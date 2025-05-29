@@ -190,17 +190,6 @@ export default function AvailabilityStep() {
         });
     };
 
-    const copyTimeSlot = (day: string, slotIndex: number) => {
-        const timeSlot = availability[day].timeSlots[slotIndex];
-        setAvailability(prev => ({
-            ...prev,
-            [day]: {
-                ...prev[day],
-                timeSlots: [...prev[day].timeSlots, { ...timeSlot }]
-            }
-        }));
-    };
-
     const deleteTimeSlot = (day: string, slotIndex: number) => {
         setAvailability(prev => ({
             ...prev,
@@ -367,7 +356,6 @@ export default function AvailabilityStep() {
                                             variant="ghost"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                copyTimeSlot(day, slotIndex);
                                             }}
                                         >
                                             <FiCopy />
