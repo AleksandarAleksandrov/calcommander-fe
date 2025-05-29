@@ -56,11 +56,20 @@ const createStartTimeCollection = (endTime: string, timeSlots: TimeSlot[], curre
 };
 
 // Helper function to create filtered time options for end time (after start time)
-const createEndTimeCollection = (startTime: string) => {
+const createEndTimeCollection = (startTime: string, timeSlots: TimeSlot[], currentSlotIndex: number) => {
     const startTimeMinutes = timeToMinutes(startTime);
-    const filteredOptions = TIME_OPTIONS.filter(option =>
-        timeToMinutes(option.value) > startTimeMinutes
-    );
+    let maxEndTimeMinutes = 24 * 60; // Default to end of day (24:00 in minutes)
+
+    // If there is a next slot, end time must be before the next slot's start time
+    if (currentSlotIndex < timeSlots.length - 1) {
+        const nextSlot = timeSlots[currentSlotIndex + 1];
+        maxEndTimeMinutes = timeToMinutes(nextSlot.startTime);
+    }
+
+    const filteredOptions = TIME_OPTIONS.filter(option => {
+        const optionMinutes = timeToMinutes(option.value);
+        return optionMinutes > startTimeMinutes && optionMinutes < maxEndTimeMinutes;
+    });
     return createListCollection({ items: filteredOptions });
 };
 
@@ -85,11 +94,20 @@ const getFilteredStartTimeOptions = (endTime: string, timeSlots: TimeSlot[], cur
 };
 
 // Helper function to get filtered end time options for rendering
-const getFilteredEndTimeOptions = (startTime: string) => {
+const getFilteredEndTimeOptions = (startTime: string, timeSlots: TimeSlot[], currentSlotIndex: number) => {
     const startTimeMinutes = timeToMinutes(startTime);
-    return TIME_OPTIONS.filter(option =>
-        timeToMinutes(option.value) > startTimeMinutes
-    );
+    let maxEndTimeMinutes = 24 * 60; // Default to end of day (24:00 in minutes)
+
+    // If there is a next slot, end time must be before the next slot's start time
+    if (currentSlotIndex < timeSlots.length - 1) {
+        const nextSlot = timeSlots[currentSlotIndex + 1];
+        maxEndTimeMinutes = timeToMinutes(nextSlot.startTime);
+    }
+
+    return TIME_OPTIONS.filter(option => {
+        const optionMinutes = timeToMinutes(option.value);
+        return optionMinutes > startTimeMinutes && optionMinutes < maxEndTimeMinutes;
+    });
 };
 
 export default function AvailabilityStep() {
@@ -133,11 +151,10 @@ export default function AvailabilityStep() {
                 newStartTime = selectedValue;
                 // If new start time is >= current end time, set end time to next available slot
                 if (timeToMinutes(selectedValue) >= timeToMinutes(currentSlot.endTime)) {
-                    const nextTimeOptions = TIME_OPTIONS.filter(option =>
-                        timeToMinutes(option.value) > timeToMinutes(selectedValue)
-                    );
-                    if (nextTimeOptions.length > 0) {
-                        newEndTime = nextTimeOptions[0].value;
+                    // Get valid end time options considering next slots
+                    const validEndOptions = getFilteredEndTimeOptions(selectedValue, timeSlots, slotIndex);
+                    if (validEndOptions.length > 0) {
+                        newEndTime = validEndOptions[0].value;
                     }
                 }
             } else {
@@ -389,7 +406,7 @@ export default function AvailabilityStep() {
                                         <Select.Root
                                             value={[slot.endTime]}
                                             onValueChange={(details) => handleTimeChange(day, slotIndex, 'endTime', details.value)}
-                                            collection={createEndTimeCollection(slot.startTime)}
+                                            collection={createEndTimeCollection(slot.startTime, availability[day].timeSlots, slotIndex)}
                                             size="md"
                                             positioning={{ strategy: "absolute" }}
                                         >
@@ -415,7 +432,7 @@ export default function AvailabilityStep() {
                                                         overflowY="auto"
                                                         zIndex={1000}
                                                     >
-                                                        {getFilteredEndTimeOptions(slot.startTime).map((time) => (
+                                                        {getFilteredEndTimeOptions(slot.startTime, availability[day].timeSlots, slotIndex).map((time) => (
                                                             <Select.Item key={time.value} item={time}>
                                                                 <Select.ItemText>{time.label}</Select.ItemText>
                                                             </Select.Item>
