@@ -354,6 +354,7 @@ export default function AvailabilityStep() {
                                             aria-label="Copy time slot"
                                             size="sm"
                                             variant="ghost"
+                                            visibility={slotIndex === 0 ? "visible" : "hidden"}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                             }}
@@ -369,14 +370,11 @@ export default function AvailabilityStep() {
             ))}
 
             <Button
-                size="lg"
-                bg="gray.800"
-                color="white"
-                mt={6}
-                py={6}
-                fontSize="lg"
-                fontWeight="medium"
-                _hover={{ bg: "gray.700" }}
+                type="submit"
+                size="xl"
+                w="100%"
+                borderRadius="md"
+                colorPalette="blue"
             >
                 Next Step →
             </Button>
