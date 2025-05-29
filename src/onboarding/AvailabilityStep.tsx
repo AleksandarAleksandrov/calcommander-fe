@@ -163,29 +163,72 @@ export default function AvailabilityStep() {
             const existingSlots = prev[day].timeSlots;
             let defaultStartTime = '09:00';
             let defaultEndTime = '17:00';
-
+            
             // If there are existing slots, set start time after the last slot's end time
             if (existingSlots.length > 0) {
                 const lastSlot = existingSlots[existingSlots.length - 1];
                 const lastEndTimeMinutes = timeToMinutes(lastSlot.endTime);
-
+                
                 // Find the next available time slot after the last end time
-                const availableStartTimes = TIME_OPTIONS.filter(option =>
+                const availableStartTimes = TIME_OPTIONS.filter(option => 
                     timeToMinutes(option.value) > lastEndTimeMinutes
                 );
-
+                
                 if (availableStartTimes.length > 0) {
                     defaultStartTime = availableStartTimes[0].value;
-                    // Set end time to at least one slot after start time
-                    const availableEndTimes = TIME_OPTIONS.filter(option =>
-                        timeToMinutes(option.value) > timeToMinutes(defaultStartTime)
+                    
+                    // Calculate 1 hour after start time
+                    const startTimeMinutes = timeToMinutes(defaultStartTime);
+                    const oneHourLaterMinutes = startTimeMinutes + 60;
+                    
+                    // Find all available end times after start time
+                    const availableEndTimes = TIME_OPTIONS.filter(option => 
+                        timeToMinutes(option.value) > startTimeMinutes
+                    );
+                    
+                    if (availableEndTimes.length > 0) {
+                        // Try to find a time that's 1 hour later
+                        const oneHourLaterOption = availableEndTimes.find(option =>
+                            timeToMinutes(option.value) >= oneHourLaterMinutes
+                        );
+                        
+                        if (oneHourLaterOption) {
+                            // Use the first time that's at least 1 hour later
+                            defaultEndTime = oneHourLaterOption.value;
+                        } else {
+                            // Use the maximum available time if less than 1 hour left
+                            defaultEndTime = availableEndTimes[availableEndTimes.length - 1].value;
+                        }
+                    } else {
+                        // If no end times available, can't add a new slot
+                        return prev;
+                    }
+                } else {
+                    // If no more start times available, can't add a new slot
+                    return prev;
+                }
+            } else {
+                // For the first slot, still try to set end time to 1 hour after start
+                const startTimeMinutes = timeToMinutes(defaultStartTime);
+                const oneHourLaterMinutes = startTimeMinutes + 60;
+                
+                const oneHourLaterOption = TIME_OPTIONS.find(option =>
+                    timeToMinutes(option.value) >= oneHourLaterMinutes
+                );
+                
+                if (oneHourLaterOption) {
+                    defaultEndTime = oneHourLaterOption.value;
+                } else {
+                    // Fallback to last available time
+                    const availableEndTimes = TIME_OPTIONS.filter(option => 
+                        timeToMinutes(option.value) > startTimeMinutes
                     );
                     if (availableEndTimes.length > 0) {
-                        defaultEndTime = availableEndTimes[0].value;
+                        defaultEndTime = availableEndTimes[availableEndTimes.length - 1].value;
                     }
                 }
             }
-
+            
             return {
                 ...prev,
                 [day]: {
