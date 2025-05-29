@@ -29,6 +29,46 @@ const generateTimeOptions = () => {
 const TIME_OPTIONS = generateTimeOptions();
 const timeCollection = createListCollection({ items: TIME_OPTIONS });
 
+// Helper function to convert time string to minutes for comparison
+const timeToMinutes = (timeString: string): number => {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+};
+
+// Helper function to create filtered time options for start time (before end time)
+const createStartTimeCollection = (endTime: string) => {
+    const endTimeMinutes = timeToMinutes(endTime);
+    const filteredOptions = TIME_OPTIONS.filter(option => 
+        timeToMinutes(option.value) < endTimeMinutes
+    );
+    return createListCollection({ items: filteredOptions });
+};
+
+// Helper function to create filtered time options for end time (after start time)
+const createEndTimeCollection = (startTime: string) => {
+    const startTimeMinutes = timeToMinutes(startTime);
+    const filteredOptions = TIME_OPTIONS.filter(option => 
+        timeToMinutes(option.value) > startTimeMinutes
+    );
+    return createListCollection({ items: filteredOptions });
+};
+
+// Helper function to get filtered start time options for rendering
+const getFilteredStartTimeOptions = (endTime: string) => {
+    const endTimeMinutes = timeToMinutes(endTime);
+    return TIME_OPTIONS.filter(option => 
+        timeToMinutes(option.value) < endTimeMinutes
+    );
+};
+
+// Helper function to get filtered end time options for rendering
+const getFilteredEndTimeOptions = (startTime: string) => {
+    const startTimeMinutes = timeToMinutes(startTime);
+    return TIME_OPTIONS.filter(option => 
+        timeToMinutes(option.value) > startTimeMinutes
+    );
+};
+
 export default function AvailabilityStep() {
     const [availability, setAvailability] = useState<Record<string, DayAvailability>>({
         Monday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
@@ -53,15 +93,46 @@ export default function AvailabilityStep() {
 
     const handleTimeChange = (day: string, slotIndex: number, field: 'startTime' | 'endTime', value: string[]) => {
         const selectedValue = value[0]; // Extract the first (and only) value from the array
-        setAvailability(prev => ({
-            ...prev,
-            [day]: {
-                ...prev[day],
-                timeSlots: prev[day].timeSlots.map((slot, index) =>
-                    index === slotIndex ? { ...slot, [field]: selectedValue } : slot
-                )
+        
+        setAvailability(prev => {
+            const currentSlot = prev[day].timeSlots[slotIndex];
+            let newStartTime = currentSlot.startTime;
+            let newEndTime = currentSlot.endTime;
+            
+            if (field === 'startTime') {
+                newStartTime = selectedValue;
+                // If new start time is >= current end time, set end time to next available slot
+                if (timeToMinutes(selectedValue) >= timeToMinutes(currentSlot.endTime)) {
+                    const nextTimeOptions = TIME_OPTIONS.filter(option => 
+                        timeToMinutes(option.value) > timeToMinutes(selectedValue)
+                    );
+                    if (nextTimeOptions.length > 0) {
+                        newEndTime = nextTimeOptions[0].value;
+                    }
+                }
+            } else {
+                newEndTime = selectedValue;
+                // If new end time is <= current start time, set start time to previous available slot
+                if (timeToMinutes(selectedValue) <= timeToMinutes(currentSlot.startTime)) {
+                    const prevTimeOptions = TIME_OPTIONS.filter(option => 
+                        timeToMinutes(option.value) < timeToMinutes(selectedValue)
+                    );
+                    if (prevTimeOptions.length > 0) {
+                        newStartTime = prevTimeOptions[prevTimeOptions.length - 1].value;
+                    }
+                }
             }
-        }));
+            
+            return {
+                ...prev,
+                [day]: {
+                    ...prev[day],
+                    timeSlots: prev[day].timeSlots.map((slot, index) =>
+                        index === slotIndex ? { startTime: newStartTime, endTime: newEndTime } : slot
+                    )
+                }
+            };
+        });
     };
 
     const addTimeSlot = (day: string) => {
@@ -137,7 +208,7 @@ export default function AvailabilityStep() {
                                         <Select.Root
                                             value={[slot.startTime]}
                                             onValueChange={(details) => handleTimeChange(day, slotIndex, 'startTime', details.value)}
-                                            collection={timeCollection}
+                                            collection={createStartTimeCollection(slot.endTime)}
                                             size="md"
                                             positioning={{ strategy: "absolute" }}
                                         >
@@ -163,7 +234,7 @@ export default function AvailabilityStep() {
                                                         overflowY="auto"
                                                         zIndex={1000}
                                                     >
-                                                        {TIME_OPTIONS.map((time) => (
+                                                        {getFilteredStartTimeOptions(slot.endTime).map((time) => (
                                                             <Select.Item key={time.value} item={time}>
                                                                 <Select.ItemText>{time.label}</Select.ItemText>
                                                             </Select.Item>
@@ -176,7 +247,7 @@ export default function AvailabilityStep() {
                                         <Select.Root
                                             value={[slot.endTime]}
                                             onValueChange={(details) => handleTimeChange(day, slotIndex, 'endTime', details.value)}
-                                            collection={timeCollection}
+                                            collection={createEndTimeCollection(slot.startTime)}
                                             size="md"
                                             positioning={{ strategy: "absolute" }}
                                         >
@@ -202,7 +273,7 @@ export default function AvailabilityStep() {
                                                         overflowY="auto"
                                                         zIndex={1000}
                                                     >
-                                                        {TIME_OPTIONS.map((time) => (
+                                                        {getFilteredEndTimeOptions(slot.startTime).map((time) => (
                                                             <Select.Item key={time.value} item={time}>
                                                                 <Select.ItemText>{time.label}</Select.ItemText>
                                                             </Select.Item>
