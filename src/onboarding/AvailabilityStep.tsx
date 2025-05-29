@@ -78,50 +78,49 @@ export default function AvailabilityStep() {
                         key={day}
                         p={4}
                         borderRadius="lg"
-                        border="2px solid"
-                        borderColor={selectedDay === day ? "blue.500" : "gray.200"}
-                        bg={selectedDay === day ? "blue.50" : "white"}
-                        onClick={() => setSelectedDay(day)}
+                        border="1px solid"
+                        borderColor={availability[day].enabled ? "gray.100" : "gray.200"}
                         cursor="pointer"
-                        transition="all 0.2s"
                     >
-                        <Stack direction="row" gap={4} align="center">
-                            {/* Custom Switch Toggle */}
-                            <Box
-                                as="button"
-                                w="12"
-                                h="6"
-                                bg={availability[day].enabled ? "blue.500" : "gray.300"}
-                                borderRadius="full"
-                                position="relative"
-                                transition="all 0.2s"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDayToggle(day);
-                                }}
-                                _focus={{ outline: "2px solid", outlineColor: "blue.300" }}
-                            >
+                        <Stack direction="row" gap={4} align="flex-start">
+                            <Stack direction="row" gap={4} align="center">
+                                {/* Custom Switch Toggle */}
                                 <Box
-                                    w="5"
-                                    h="5"
-                                    bg="white"
+                                    as="button"
+                                    w="12"
+                                    h="6"
+                                    bg={availability[day].enabled ? "blue.500" : "gray.300"}
                                     borderRadius="full"
-                                    position="absolute"
-                                    top="0.5"
-                                    left={availability[day].enabled ? "6" : "0.5"}
+                                    position="relative"
                                     transition="all 0.2s"
-                                    boxShadow="sm"
-                                />
-                            </Box>
-                            
-                            <Text
-                                fontSize="md"
-                                fontWeight="medium"
-                                width="90px"
-                                color={availability[day].enabled ? "gray.800" : "gray.400"}
-                            >
-                                {day}
-                            </Text>
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDayToggle(day);
+                                    }}
+                                    _focus={{ outline: "2px solid", outlineColor: "blue.300" }}
+                                >
+                                    <Box
+                                        w="5"
+                                        h="5"
+                                        bg="white"
+                                        borderRadius="full"
+                                        position="absolute"
+                                        top="0.5"
+                                        left={availability[day].enabled ? "6" : "0.5"}
+                                        transition="all 0.2s"
+                                        boxShadow="sm"
+                                    />
+                                </Box>
+                                
+                                <Text
+                                    fontSize="md"
+                                    fontWeight="medium"
+                                    width="90px"
+                                    color={availability[day].enabled ? "gray.800" : "gray.400"}
+                                >
+                                    {day}
+                                </Text>
+                            </Stack>
                             
                             {availability[day].enabled && (
                                 <Stack gap={2} align="stretch" flex={1}>
