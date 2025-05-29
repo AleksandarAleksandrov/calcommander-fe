@@ -13,6 +13,7 @@ import {
     defineStyle,
 } from '@chakra-ui/react';
 import { FiArrowRight } from 'react-icons/fi';
+import UserInfoStep from './UserInfoStep';
 
 const floatingStyles = defineStyle({
     pos: "absolute",
@@ -41,15 +42,6 @@ const OnboardingPage: React.FC = () => {
         fullName: 'Jane Smith',
         timezone: 'America/Los_Angeles',
     });
-
-    const getCurrentTime = () => {
-        const now = new Date();
-        return now.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true,
-        });
-    };
 
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({
@@ -96,126 +88,7 @@ const OnboardingPage: React.FC = () => {
                     </Stack>
 
                     <Box bg="white" p={8} borderRadius="lg" shadow="sm">
-                        {/* Header */}
-
-                        {/* Form */}
-                        <Stack gap={6}>
-                            {/* Username Field */}
-                            <Field.Root>
-                                <Field.Label fontSize="sm" fontWeight="medium" color="gray.700">
-                                    Username
-                                </Field.Label>
-                                <Box position="relative" display="flex">
-                                    <Box
-                                        bg="gray.100"
-                                        border="1px solid"
-                                        borderColor="gray.200"
-                                        fontSize="sm"
-                                        color="gray.600"
-                                        px={3}
-                                        py={2.5}
-                                        borderRightRadius={0}
-                                        borderTopLeftRadius="md"
-                                        borderBottomLeftRadius="md"
-                                        display="flex"
-                                        alignItems="center"
-                                    >
-                                        cal.com/
-                                    </Box>
-                                    <Input
-                                        value={formData.username}
-                                        onChange={(e) => handleInputChange('username', e.target.value)}
-                                        border="1px solid"
-                                        borderColor="gray.200"
-                                        borderLeftRadius={0}
-                                        borderLeft="none"
-                                        _focus={{
-                                            borderColor: "gray.400",
-                                            boxShadow: "0 0 0 1px var(--chakra-colors-gray-400)",
-                                        }}
-                                        flex="1"
-                                    />
-                                </Box>
-                            </Field.Root>
-
-                            {/* Full Name Field */}
-                            <Field.Root>
-                                <Field.Label fontSize="sm" fontWeight="medium" color="gray.700">
-                                    Full name
-                                </Field.Label>
-                                <Input
-                                    value={formData.fullName}
-                                    onChange={(e) => handleInputChange('fullName', e.target.value)}
-                                    border="1px solid"
-                                    borderColor="gray.200"
-                                    _focus={{
-                                        borderColor: "gray.400",
-                                        boxShadow: "0 0 0 1px var(--chakra-colors-gray-400)",
-                                    }}
-                                />
-                            </Field.Root>
-
-                            {/* Timezone Field */}
-                            <Field.Root>
-                                <Field.Label fontSize="sm" fontWeight="medium" color="gray.700">
-                                    Timezone
-                                </Field.Label>
-                                <Box position="relative">
-                                    <select
-                                        value={formData.timezone}
-                                        onChange={(e) => handleInputChange('timezone', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '8px 12px',
-                                            border: '1px solid #E2E8F0',
-                                            borderRadius: '6px',
-                                            fontSize: '16px',
-                                            backgroundColor: 'white',
-                                            appearance: 'none',
-                                            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                                            backgroundPosition: 'right 8px center',
-                                            backgroundRepeat: 'no-repeat',
-                                            backgroundSize: '16px',
-                                        }}
-                                    >
-                                        <option value="America/Los_Angeles">America/Los_Angeles</option>
-                                        <option value="America/New_York">America/New_York</option>
-                                        <option value="America/Chicago">America/Chicago</option>
-                                        <option value="America/Denver">America/Denver</option>
-                                        <option value="Europe/London">Europe/London</option>
-                                        <option value="Europe/Paris">Europe/Paris</option>
-                                        <option value="Asia/Tokyo">Asia/Tokyo</option>
-                                        <option value="Australia/Sydney">Australia/Sydney</option>
-                                    </select>
-                                </Box>
-                                <Text fontSize="xs" color="gray.500" mt={1}>
-                                    Current time {getCurrentTime()}
-                                </Text>
-                            </Field.Root>
-
-                            {/* Next Step Button */}
-                            <Button
-                                onClick={handleNextStep}
-                                bg="gray.900"
-                                color="white"
-                                w="full"
-                                size="lg"
-                                _hover={{
-                                    bg: "gray.800",
-                                }}
-                                _active={{
-                                    bg: "gray.900",
-                                }}
-                                mt={4}
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                gap={2}
-                            >
-                                Next Step
-                                <FiArrowRight />
-                            </Button>
-                        </Stack>
+                        <UserInfoStep />
                     </Box>
                 </Box>
             </Box>
