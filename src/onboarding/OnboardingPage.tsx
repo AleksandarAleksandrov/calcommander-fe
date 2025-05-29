@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { FiArrowRight } from 'react-icons/fi';
 import UserInfoStep from './UserInfoStep';
+import OnboardingWizardControl from './OnboardingWizardControl';
 
 const floatingStyles = defineStyle({
     pos: "absolute",
@@ -37,55 +38,28 @@ const floatingStyles = defineStyle({
 });
 
 const OnboardingPage: React.FC = () => {
-    const [formData, setFormData] = useState({
-        username: 'janesmith',
-        fullName: 'Jane Smith',
-        timezone: 'America/Los_Angeles',
-    });
 
-    const handleInputChange = (field: string, value: string) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
-
-    const handleNextStep = () => {
-        // Handle next step logic here
-        console.log('Form data:', formData);
-    };
 
     return (
         <Box minH="100vh" bg="gray.50" display="flex" flexDirection="column">
             {/* Main Content */}
-            <Box flex="1" display="flex" alignItems="center" justifyContent="center" py={8}>
-                <Box w="full" maxW="400px" mx={4}>
+            <Box flex="1" display="flex" alignItems="flex-start" justifyContent="center" py={8}>
+                <Box w="full" maxW="500px" mx={4}>
                     {/* Progress Indicator */}
                     <Stack gap={4} align="center" mb={8}>
-                        <Heading size="xl" color="gray.900" textAlign="center">
-                            Welcome to Cal.com!
+                        <Heading size="3xl" color="gray.900" textAlign="center">
+                            Welcome to {import.meta.env.VITE_APP_NAME}!
                         </Heading>
-                        <Text fontSize="sm" color="gray.600" textAlign="center" lineHeight="tall">
+                    </Stack>
+                    <Stack gap={4} align="center" mb={8}>
+                        <Text fontSize="sm" color="gray.600" textAlign="left" lineHeight="tall">
                             We just need some basic info to get your profile setup.
                             <br />
                             You'll be able to edit this later.
                         </Text>
                     </Stack>
-                    <Stack gap={2} mb={6}>
 
-                        <Text fontSize="sm" color="gray.600" alignSelf="flex-start">
-                            Step 1 of 4
-                        </Text>
-                        <Box w="full" h="2" bg="gray.200" borderRadius="full">
-                            <Box
-                                w="25%"
-                                h="full"
-                                bg="gray.900"
-                                borderRadius="full"
-                                transition="width 0.3s ease"
-                            />
-                        </Box>
-                    </Stack>
+                    <OnboardingWizardControl />
 
                     <Box bg="white" p={8} borderRadius="lg" shadow="sm">
                         <UserInfoStep />

@@ -1,7 +1,7 @@
-import { Button, Stack, Text, Box, Input, Field, defineStyle, Select, Portal, createListCollection } from "@chakra-ui/react";
+import { Button, Stack, Box, Input, Field, defineStyle } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
-import { useState, useMemo } from "react";
 import TimezoneInput from "@/components/TimezoneInput";
+import OnboardingWizardControl from "./OnboardingWizardControl";
 
 const floatingStyles = defineStyle({
     bg: "bg",
@@ -44,7 +44,7 @@ export default function UserInfoStep() {
                     display="flex"
                     alignItems="center"
                 >
-                    cal.com/
+                    {import.meta.env.VITE_APP_URL_SLUG}/
                 </Box>
                 <Input
                     className='peer'
