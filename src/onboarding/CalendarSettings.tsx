@@ -11,16 +11,43 @@ import {
     Checkbox
 } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
+import { useState } from "react";
 
 export default function CalendarSettings() {
 
     const dispatch = useDispatch();
     const currentDay = new Date().getDate();
+    const MAX_CALENDARS = 7;
+
+    // State to manage calendars
+    const [calendars, setCalendars] = useState([
+        {
+            id: 1,
+            provider: "Google",
+            email: "calendar1@gmail.com",
+            connected: true
+        }
+    ]);
+
+    // Function to add new calendar
+    const addCalendar = () => {
+        if (calendars.length >= MAX_CALENDARS) {
+            return; // Don't add more than MAX_CALENDARS calendars
+        }
+        const newCalendar = {
+            id: calendars.length + 1,
+            provider: "Google",
+            email: `calendar${calendars.length + 1}@gmail.com`,
+            connected: true
+        };
+        setCalendars([...calendars, newCalendar]);
+    };
 
     const calendarOptions = createListCollection({
-        items: [
-            { label: "amaleksandrov94@gmail.com", value: "amaleksandrov94@gmail.com" }
-        ]
+        items: calendars.map(calendar => ({
+            label: calendar.email,
+            value: calendar.email
+        }))
     });
 
     return (
@@ -31,55 +58,67 @@ export default function CalendarSettings() {
                     Your calendar
                 </Text>
 
-                <Box
-                    p={4}
-                    border="1px solid"
-                    borderColor="gray.200"
-                    borderRadius="md"
-                    bg="gray.50"
-                >
-                    <Flex justify="space-between" align="center">
-                        <Flex align="center" gap={3}>
-                            <Box
-                                w={11}
-                                h={11}
-                                bg="blue.500"
-                                borderRadius="md"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                color="white"
-                                fontSize="md"
-                                fontWeight="bold"
-                            >
-                                {currentDay}
-                            </Box>
-                            <Box>
-                                <Text fontWeight="medium" color="gray.800">Google</Text>
-                                <Text fontSize="sm" color="gray.600">
-                                    amaleksandrov94@gmail.com
-                                </Text>
-                            </Box>
-                        </Flex>
-                        <Box bg="bg.success" color="gray.600" px={3} py={1}
+                <Stack gap={3} mb={4}>
+                    {calendars.map((calendar) => (
+                        <Box
+                            key={calendar.id}
+                            p={4}
                             border="1px solid"
-                            borderColor="green.400"
-                            borderRadius="md" fontSize="sm">
-                            Connected
+                            borderColor="gray.200"
+                            borderRadius="md"
+                            bg="gray.50"
+                        >
+                            <Flex justify="space-between" align="center">
+                                <Flex align="center" gap={3}>
+                                    <Box
+                                        w={11}
+                                        h={11}
+                                        bg="blue.500"
+                                        borderRadius="md"
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        color="white"
+                                        fontSize="md"
+                                        fontWeight="bold"
+                                    >
+                                        {currentDay}
+                                    </Box>
+                                    <Box>
+                                        <Text fontWeight="medium" color="gray.800">{calendar.provider}</Text>
+                                        <Text fontSize="sm" color="gray.600">
+                                            {calendar.email}
+                                        </Text>
+                                    </Box>
+                                </Flex>
+                                <Box bg="bg.success" color="gray.600" px={3} py={1}
+                                    border="1px solid"
+                                    borderColor="green.400"
+                                    borderRadius="md" fontSize="sm">
+                                    {calendar.connected ? "Connected" : "Disconnected"}
+                                </Box>
+                            </Flex>
                         </Box>
-                    </Flex>
-                </Box>
+                    ))}
+                </Stack>
 
-                <Button
-                    mt={3}
-                    type="submit"
-                    size="md"
-                    borderRadius="md"
-                    colorPalette="blue"
-                    flex="1"
-                >
-                    Add calendar
-                </Button>
+                <Flex direction="row" gap={3} align="baseline">
+                    <Button
+                        mt={3}
+                        type="submit"
+                        size="sm"
+                        borderRadius="md"
+                        colorPalette="blue"
+                        flex="0 0 auto"
+                        onClick={addCalendar}
+                        disabled={calendars.length >= MAX_CALENDARS}
+                    >
+                        Add calendar
+                    </Button>
+                    <Text fontSize="sm" color="gray.700">
+                        You can add up to {MAX_CALENDARS} calendars
+                    </Text>
+                </Flex>
             </Box>
 
             {/* Check for conflicts section */}
@@ -91,19 +130,23 @@ export default function CalendarSettings() {
                     Select calendar(s) to check for conflicts to prevent double bookings.
                 </Text>
 
-                <Flex justify="flex-start" align="center" gap={3}>
-                    <Checkbox.Root
-                        defaultChecked
-                        colorPalette="blue"
-                        size="md"
-                    >
-                        <Checkbox.HiddenInput />
-                        <Checkbox.Control />
-                    </Checkbox.Root>
-                    <Text fontSize="sm" color="gray.700">
-                        amaleksandrov94@gmail.com
-                    </Text>
-                </Flex>
+                <Stack gap={3}>
+                    {calendars.map((calendar) => (
+                        <Flex key={calendar.id} justify="flex-start" align="center" gap={3}>
+                            <Checkbox.Root
+                                defaultChecked
+                                colorPalette="blue"
+                                size="md"
+                            >
+                                <Checkbox.HiddenInput />
+                                <Checkbox.Control />
+                            </Checkbox.Root>
+                            <Text fontSize="sm" color="gray.700">
+                                {calendar.email}
+                            </Text>
+                        </Flex>
+                    ))}
+                </Stack>
             </Box>
 
             {/* Add to calendar section */}
@@ -117,7 +160,7 @@ export default function CalendarSettings() {
 
                 <Select.Root
                     collection={calendarOptions}
-                    defaultValue={["amaleksandrov94@gmail.com"]}
+                    defaultValue={[calendars[0]?.email]}
                     className='peer'
                     size="lg"
                     css={{ "--focus-color": "blue" }}
