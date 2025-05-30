@@ -277,20 +277,29 @@ export default function AvailabilityStep() {
 
     const openCopyDialog = (sourceDay: string, event: React.MouseEvent) => {
         const rect = event.currentTarget.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        
         const dropdownWidth = 250; // minW of dropdown
-        const dropdownHeight = 300; // estimated height
+        const dropdownHeight = 350; // estimated height with new buttons
+        
+        // Calculate position relative to viewport + scroll offset
+        let top = rect.bottom + scrollTop + 8;
+        let left = rect.left + scrollLeft;
 
-        let top = rect.bottom + 8;
-        let left = rect.left;
-
-        // Ensure dropdown doesn't go off screen
-        if (left + dropdownWidth > window.innerWidth) {
-            left = window.innerWidth - dropdownWidth - 16; // 16px margin
+        // Ensure dropdown doesn't go off screen horizontally
+        if (left + dropdownWidth > window.innerWidth + scrollLeft) {
+            left = rect.right + scrollLeft - dropdownWidth; // Align to right edge of button
         }
 
-        if (top + dropdownHeight > window.innerHeight) {
-            top = rect.top - dropdownHeight - 8; // Position above if no space below
+        // Ensure dropdown doesn't go off screen vertically
+        if (rect.bottom + dropdownHeight > window.innerHeight) {
+            top = rect.top + scrollTop - dropdownHeight - 8; // Position above if no space below
         }
+
+        // Ensure minimum margins from screen edges
+        left = Math.max(16, Math.min(left, window.innerWidth + scrollLeft - dropdownWidth - 16));
+        top = Math.max(16, top);
 
         setCopyDialog({
             isOpen: true,
@@ -554,7 +563,7 @@ export default function AvailabilityStep() {
                         onClick={closeCopyDialog}
                     />
                     <Box
-                        position="fixed"
+                        position="absolute"
                         top={`${copyDialog.position?.top}px`}
                         left={`${copyDialog.position?.left}px`}
                         bg="white"
