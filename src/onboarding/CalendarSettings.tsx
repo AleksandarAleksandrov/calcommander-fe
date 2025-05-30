@@ -41,15 +41,15 @@ export default function CalendarSettings() {
                     <Flex justify="space-between" align="center">
                         <Flex align="center" gap={3}>
                             <Box
-                                w={8}
-                                h={8}
+                                w={11}
+                                h={11}
                                 bg="blue.500"
                                 borderRadius="md"
                                 display="flex"
                                 alignItems="center"
                                 justifyContent="center"
                                 color="white"
-                                fontSize="xs"
+                                fontSize="md"
                                 fontWeight="bold"
                             >
                                 {currentDay}
