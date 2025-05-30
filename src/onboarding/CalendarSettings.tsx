@@ -61,23 +61,25 @@ export default function CalendarSettings() {
                                 </Text>
                             </Box>
                         </Flex>
-                        <Box bg="green.100" color="green.800" px={3} py={1}
+                        <Box bg="bg.success" color="gray.600" px={3} py={1}
                             border="1px solid"
+                            borderColor="green.400"
                             borderRadius="md" fontSize="sm">
                             Connected
                         </Box>
                     </Flex>
                 </Box>
 
-                <Text
-                    color="blue.500"
-                    fontSize="sm"
+                <Button
                     mt={3}
-                    cursor="pointer"
-                    _hover={{ textDecoration: "underline" }}
+                    type="submit"
+                    size="md"
+                    borderRadius="md"
+                    colorPalette="blue"
+                    flex="1"
                 >
-                    Use a different calendar
-                </Text>
+                    Add calendar
+                </Button>
             </Box>
 
             {/* Check for conflicts section */}
@@ -127,8 +129,6 @@ export default function CalendarSettings() {
                     <Select.Trigger
                         bg="white"
                         borderColor="gray.300"
-                        _hover={{ borderColor: "gray.400" }}
-                        _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px #4285F4" }}
                     >
                         <Select.ValueText placeholder="Select calendar" />
                         <Select.Indicator />
@@ -164,14 +164,11 @@ export default function CalendarSettings() {
                             <Checkbox.Control />
                         </Checkbox.Root>
                         <Text fontSize="sm" color="gray.700">
-                            Automatically sync cancellations and reschedules from this calendar to Calendly
+                            Automatically sync cancellations and reschedules from this calendar to {import.meta.env.VITE_APP_NAME}
                         </Text>
                     </Flex>
                 </Box>
             </Box>
-
-
-
 
             <Stack direction="row" gap={4} w="100%">
                 <Button
