@@ -62,7 +62,7 @@ export default function CalendarSettings() {
             {/* Your calendar section */}
             <Box mb={8}>
                 <Text fontSize="xl" fontWeight="semibold" mb={4} color="gray.800">
-                    Your calendar
+                    Your calendar(s)
                 </Text>
 
                 <Stack gap={3} mb={4}>
@@ -116,6 +116,23 @@ export default function CalendarSettings() {
                                         </IconButton>
                                     </Flex>
                                 </Flex>
+
+                                <Stack mt={3}>
+                                    <Flex key={calendar.id} justify="flex-start" align="center" gap={3}>
+                                        <Checkbox.Root
+                                            defaultChecked
+                                            colorPalette="blue"
+                                            background="white"
+                                            size="md"
+                                        >
+                                            <Checkbox.HiddenInput />
+                                            <Checkbox.Control />
+                                        </Checkbox.Root>
+                                        <Text fontSize="sm" color="gray.700">
+                                            Check for conflicts to prevent double bookings
+                                        </Text>
+                                    </Flex>
+                                </Stack>
                             </Box>
                         ))
                     ) : (
@@ -151,40 +168,6 @@ export default function CalendarSettings() {
                         You can add up to {MAX_CALENDARS} calendars
                     </Text>
                 </Flex>
-            </Box>
-
-            {/* Check for conflicts section */}
-            <Box mb={8}>
-                <Text fontSize="lg" fontWeight="semibold" mb={2} color="gray.800">
-                    Check for conflicts
-                </Text>
-                <Text fontSize="sm" color="gray.600" mb={4}>
-                    Select calendar(s) to check for conflicts to prevent double bookings.
-                </Text>
-
-                <Stack gap={3}>
-                    {calendars.length > 0 ? (
-                        calendars.map((calendar) => (
-                            <Flex key={calendar.id} justify="flex-start" align="center" gap={3}>
-                                <Checkbox.Root
-                                    defaultChecked
-                                    colorPalette="blue"
-                                    size="md"
-                                >
-                                    <Checkbox.HiddenInput />
-                                    <Checkbox.Control />
-                                </Checkbox.Root>
-                                <Text fontSize="sm" color="gray.700">
-                                    {calendar.email}
-                                </Text>
-                            </Flex>
-                        ))
-                    ) : (
-                        <Text fontSize="sm" color="gray.500" fontStyle="italic">
-                            No calendars available to check for conflicts.
-                        </Text>
-                    )}
-                </Stack>
             </Box>
 
             {/* Add to calendar section */}
