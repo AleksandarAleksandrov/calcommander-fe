@@ -4,13 +4,24 @@ import {
     Text,
     Flex,
     Stack,
-    Button
+    Button,
+    Select,
+    createListCollection,
+    Portal
 } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 
 export default function CalendarSettings() {
 
     const dispatch = useDispatch();
+    const currentDay = new Date().getDate();
+    
+    const calendarOptions = createListCollection({
+        items: [
+            { label: "amaleksandrov94@gmail.com", value: "amaleksandrov94@gmail.com" }
+        ]
+    });
+
     return (
         <>
             {/* Your calendar section */}
@@ -40,7 +51,7 @@ export default function CalendarSettings() {
                                 fontSize="xs"
                                 fontWeight="bold"
                             >
-                                31
+                                {currentDay}
                             </Box>
                             <Box>
                                 <Text fontWeight="medium" color="gray.800">Google</Text>
@@ -99,22 +110,38 @@ export default function CalendarSettings() {
                     Select the calendar you would like to add new events to as they're scheduled.
                 </Text>
 
-                <Box
-                    as="select"
-                    w="100%"
-                    p={3}
-                    bg="white"
-                    border="1px solid"
-                    borderColor="gray.300"
-                    borderRadius="md"
-                    fontSize="sm"
-                    _hover={{ borderColor: "gray.400" }}
-                    _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px #4285F4" }}
+                <Select.Root
+                    collection={calendarOptions}
+                    defaultValue={["amaleksandrov94@gmail.com"]}
+                    size="md"
                 >
-                    <option value="amaleksandrov94@gmail.com">
-                        amaleksandrov94@gmail.com
-                    </option>
-                </Box>
+                    <Select.Trigger
+                        bg="white"
+                        borderColor="gray.300"
+                        _hover={{ borderColor: "gray.400" }}
+                        _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px #4285F4" }}
+                    >
+                        <Select.ValueText placeholder="Select calendar" />
+                    </Select.Trigger>
+                    <Portal>
+                        <Select.Positioner>
+                            <Select.Content
+                                bg="white"
+                                border="1px solid"
+                                borderColor="gray.200"
+                                borderRadius="md"
+                                boxShadow="lg"
+                                zIndex={1000}
+                            >
+                                {calendarOptions.items.map((option) => (
+                                    <Select.Item key={option.value} item={option}>
+                                        <Select.ItemText>{option.label}</Select.ItemText>
+                                    </Select.Item>
+                                ))}
+                            </Select.Content>
+                        </Select.Positioner>
+                    </Portal>
+                </Select.Root>
             </Box>
 
             {/* Sync options */}
