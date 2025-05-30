@@ -129,7 +129,6 @@ export default function AvailabilityStep() {
         sourceDay: ''
     });
     const [selectedDays, setSelectedDays] = useState<string[]>([]);
-    const [selectAll, setSelectAll] = useState(false);
 
     const handleDayToggle = (day: string) => {
         setAvailability(prev => ({
@@ -299,44 +298,38 @@ export default function AvailabilityStep() {
             position: { top, left }
         });
         setSelectedDays([]);
-        setSelectAll(false);
     };
 
     const closeCopyDialog = () => {
         setCopyDialog({ isOpen: false, sourceDay: '', position: undefined });
         setSelectedDays([]);
-        setSelectAll(false);
     };
 
     const handleDaySelection = (day: string, checked: boolean) => {
         if (checked) {
             setSelectedDays(prev => {
                 const newSelectedDays = [...prev, day];
-                // Check if all available days are now selected
-                const availableDays = DAYS.filter(d => d !== copyDialog.sourceDay);
-                const allSelected = availableDays.every(d => newSelectedDays.includes(d));
-                setSelectAll(allSelected);
                 return newSelectedDays;
             });
         } else {
             setSelectedDays(prev => {
                 const newSelectedDays = prev.filter(d => d !== day);
-                setSelectAll(false); // If any day is deselected, "all" should be unchecked
                 return newSelectedDays;
             });
         }
     };
 
-    const handleSelectAll = (checked: boolean) => {
-        setSelectAll(checked);
-        if (checked) {
-            // Select all days except the source day
-            const availableDays = DAYS.filter(day => day !== copyDialog.sourceDay);
-            setSelectedDays(availableDays);
-        } else {
-            // Deselect all days
-            setSelectedDays([]);
-        }
+    const handleSelectWorkdays = () => {
+        // Select Monday through Friday, excluding the source day
+        const workdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const availableWorkdays = workdays.filter(day => day !== copyDialog.sourceDay);
+        setSelectedDays(availableWorkdays);
+    };
+
+    const handleSelectAllWeek = () => {
+        // Select all days except the source day
+        const availableDays = DAYS.filter(day => day !== copyDialog.sourceDay);
+        setSelectedDays(availableDays);
     };
 
     const executeCopy = () => {
@@ -578,19 +571,37 @@ export default function AvailabilityStep() {
                             <Text fontSize="sm" fontWeight="semibold">
                                 Copy availability to...
                             </Text>
-                            <Checkbox.Root
-                                colorPalette="blue"
-                                checked={selectAll}
-                                onCheckedChange={(details) => handleSelectAll(!!details.checked)}
-                                size="sm"
-                            >
-                                <Checkbox.HiddenInput />
-                                <Checkbox.Label fontSize="sm">
-                                    All
-                                </Checkbox.Label>
-                                <Checkbox.Control />
-                            </Checkbox.Root>
                         </Stack>
+                        
+                        {/* Workdays and All Week buttons */}
+                        <Stack direction="row" gap={2} mb={3}>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                borderRadius="md"
+                                flex="1"
+                                onClick={handleSelectWorkdays}
+                            >
+                                Workdays
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                borderRadius="md"
+                                flex="1"
+                                onClick={handleSelectAllWeek}
+                            >
+                                All Week
+                            </Button>
+                        </Stack>
+                        
+                        {/* Separator line */}
+                        <Box 
+                            height="1px" 
+                            bg="gray.200" 
+                            mb={3}
+                        />
+                        
                         <Stack gap={2} mb={4}>
                             {DAYS.map((day) => (
                                 <Checkbox.Root
