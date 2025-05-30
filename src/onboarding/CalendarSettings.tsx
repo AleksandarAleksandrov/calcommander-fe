@@ -1,10 +1,16 @@
+import { OnboardingStep, setStep } from "@/store/onboardingSlice";
 import {
     Box,
     Text,
-    Flex
+    Flex,
+    Stack,
+    Button
 } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
 
 export default function CalendarSettings() {
+
+    const dispatch = useDispatch();
     return (
         <>
             {/* Your calendar section */}
@@ -129,6 +135,30 @@ export default function CalendarSettings() {
                     </Text>
                 </Flex>
             </Box>
+
+
+            <Stack direction="row" gap={4} w="100%">
+                <Button
+                    size="xl"
+                    variant="outline"
+                    borderRadius="md"
+                    flex="0 0 auto"
+                    minW="120px"
+                    onClick={() => dispatch(setStep(OnboardingStep.USER_INFO))}
+                >
+                    Back
+                </Button>
+                <Button
+                    type="submit"
+                    size="xl"
+                    borderRadius="md"
+                    colorPalette="blue"
+                    flex="1"
+                    onClick={() => dispatch(setStep(OnboardingStep.AVAILABILITY))}
+                >
+                    Next Step →
+                </Button>
+            </Stack>
         </>
     )
 }

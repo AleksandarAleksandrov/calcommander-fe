@@ -1,6 +1,9 @@
+import { setStep } from "@/store/onboardingSlice";
+import { OnboardingStep } from "@/store/onboardingSlice";
 import { Box, Text, Stack, Button, IconButton, Switch, Select, createListCollection, Portal, Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiPlus, FiCopy, FiX } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 
 interface TimeSlot {
     startTime: string;
@@ -351,6 +354,8 @@ export default function AvailabilityStep() {
         closeCopyDialog();
     };
 
+    const dispatch = useDispatch();
+
     return (
         <Stack gap={4}>
             {DAYS.map((day) => (
@@ -528,6 +533,7 @@ export default function AvailabilityStep() {
                     borderRadius="md"
                     flex="0 0 auto"
                     minW="120px"
+                    onClick={() => dispatch(setStep(OnboardingStep.CALENDAR_SETTINGS))}
                 >
                     Back
                 </Button>
