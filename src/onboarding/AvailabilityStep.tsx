@@ -126,6 +126,7 @@ export default function AvailabilityStep() {
         sourceDay: ''
     });
     const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const [selectAll, setSelectAll] = useState(false);
 
     const handleDayToggle = (day: string) => {
         setAvailability(prev => ({
@@ -295,18 +296,43 @@ export default function AvailabilityStep() {
             position: { top, left }
         });
         setSelectedDays([]);
+        setSelectAll(false);
     };
 
     const closeCopyDialog = () => {
         setCopyDialog({ isOpen: false, sourceDay: '', position: undefined });
         setSelectedDays([]);
+        setSelectAll(false);
     };
 
     const handleDaySelection = (day: string, checked: boolean) => {
         if (checked) {
-            setSelectedDays(prev => [...prev, day]);
+            setSelectedDays(prev => {
+                const newSelectedDays = [...prev, day];
+                // Check if all available days are now selected
+                const availableDays = DAYS.filter(d => d !== copyDialog.sourceDay);
+                const allSelected = availableDays.every(d => newSelectedDays.includes(d));
+                setSelectAll(allSelected);
+                return newSelectedDays;
+            });
         } else {
-            setSelectedDays(prev => prev.filter(d => d !== day));
+            setSelectedDays(prev => {
+                const newSelectedDays = prev.filter(d => d !== day);
+                setSelectAll(false); // If any day is deselected, "all" should be unchecked
+                return newSelectedDays;
+            });
+        }
+    };
+
+    const handleSelectAll = (checked: boolean) => {
+        setSelectAll(checked);
+        if (checked) {
+            // Select all days except the source day
+            const availableDays = DAYS.filter(day => day !== copyDialog.sourceDay);
+            setSelectedDays(availableDays);
+        } else {
+            // Deselect all days
+            setSelectedDays([]);
         }
     };
 
@@ -542,9 +568,23 @@ export default function AvailabilityStep() {
                         zIndex={1500}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <Text fontSize="sm" fontWeight="semibold" mb={3}>
-                            Copy availability to
-                        </Text>
+                        <Stack direction="row" align="center" justify="space-between" mb={3}>
+                            <Text fontSize="sm" fontWeight="semibold">
+                                Copy availability to...
+                            </Text>
+                            <Checkbox.Root
+                                colorPalette="blue"
+                                checked={selectAll}
+                                onCheckedChange={(details) => handleSelectAll(!!details.checked)}
+                                size="sm"
+                            >
+                                <Checkbox.HiddenInput />
+                                <Checkbox.Label fontSize="sm">
+                                    All
+                                </Checkbox.Label>
+                                <Checkbox.Control />
+                            </Checkbox.Root>
+                        </Stack>
                         <Stack gap={2} mb={4}>
                             {DAYS.map((day) => (
                                 <Checkbox.Root

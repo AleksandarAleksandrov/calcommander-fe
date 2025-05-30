@@ -86,7 +86,7 @@ export default function UserInfoStep() {
             borderRadius="md"
             colorPalette="blue"
             // TODO: Replace with calendar settings step
-            onClick={() => dispatch(setStep(OnboardingStep.AVAILABILITY))}
+            onClick={() => dispatch(setStep(OnboardingStep.CALENDAR_SETTINGS))}
         >
             Next Step
             <FiArrowRight />

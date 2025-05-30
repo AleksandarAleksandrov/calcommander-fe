@@ -19,11 +19,11 @@ export default function SignUpBenefits() {
             <Stack gap={8} align="flex-start" h="full">
                 <Stack gap={4} align="flex-start">
                     <Heading
-                        size="xl"
+                        size="2xl"
                         color={headingColor}
                         fontWeight="bold"
                     >
-                        Create your free account!
+                        Create your <Text as="span" fontWeight="bold" color="blue.500">free</Text> account!
                     </Heading>
 
                     <Text color={textColor} fontSize="md" lineHeight="1.6">

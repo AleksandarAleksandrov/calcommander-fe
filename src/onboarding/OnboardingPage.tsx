@@ -17,7 +17,9 @@ export default function OnboardingPage() {
                 <Box w="full" maxW="600px" mx={4}>
 
                     {step === OnboardingStep.USER_INFO && <UserInfoHeader step={step} />}
-
+                    {step === OnboardingStep.CALENDAR_SETTINGS && <UserInfoHeader step={step} />}
+                    {step === OnboardingStep.AVAILABILITY && <UserInfoHeader step={step} />}
+                    
                     <OnboardingWizardControl step={step} />
 
                     <Box bg="white" p={6} borderRadius="lg" shadow="sm">
