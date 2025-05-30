@@ -15,7 +15,7 @@ export default function CalendarSettings() {
 
     const dispatch = useDispatch();
     const currentDay = new Date().getDate();
-    
+
     const calendarOptions = createListCollection({
         items: [
             { label: "amaleksandrov94@gmail.com", value: "amaleksandrov94@gmail.com" }
@@ -60,7 +60,9 @@ export default function CalendarSettings() {
                                 </Text>
                             </Box>
                         </Flex>
-                        <Box bg="green.100" color="green.800" px={3} py={1} borderRadius="md" fontSize="sm">
+                        <Box bg="green.100" color="green.800" px={3} py={1}
+                            border="1px solid"
+                            borderRadius="md" fontSize="sm">
                             Connected
                         </Box>
                     </Flex>
@@ -113,7 +115,13 @@ export default function CalendarSettings() {
                 <Select.Root
                     collection={calendarOptions}
                     defaultValue={["amaleksandrov94@gmail.com"]}
-                    size="md"
+                    className='peer'
+                    size="lg"
+                    css={{ "--focus-color": "blue" }}
+                    borderRadius="md"
+                    borderLeftRadius="none"
+                    borderLeft="none"
+                    borderColor="gray.300"
                 >
                     <Select.Trigger
                         bg="white"
@@ -122,6 +130,7 @@ export default function CalendarSettings() {
                         _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px #4285F4" }}
                     >
                         <Select.ValueText placeholder="Select calendar" />
+                        <Select.Indicator />
                     </Select.Trigger>
                     <Portal>
                         <Select.Positioner>
@@ -142,26 +151,27 @@ export default function CalendarSettings() {
                         </Select.Positioner>
                     </Portal>
                 </Select.Root>
+                {/* Sync options */}
+                <Box paddingTop={3}>
+                    <Flex align="start" gap={3}>
+                        <input
+                            type="checkbox"
+                            defaultChecked
+                            style={{
+                                marginTop: '2px',
+                                accentColor: '#3182CE',
+                                width: '16px',
+                                height: '16px'
+                            }}
+                        />
+                        <Text fontSize="sm" color="gray.700">
+                            Automatically sync cancellations and reschedules from this calendar to Calendly
+                        </Text>
+                    </Flex>
+                </Box>
             </Box>
 
-            {/* Sync options */}
-            <Box>
-                <Flex align="start" gap={3}>
-                    <input
-                        type="checkbox"
-                        defaultChecked
-                        style={{
-                            marginTop: '2px',
-                            accentColor: '#3182CE',
-                            width: '16px',
-                            height: '16px'
-                        }}
-                    />
-                    <Text fontSize="sm" color="gray.700">
-                        Automatically sync cancellations and reschedules from this calendar to Calendly
-                    </Text>
-                </Flex>
-            </Box>
+
 
 
             <Stack direction="row" gap={4} w="100%">
