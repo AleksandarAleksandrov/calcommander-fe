@@ -7,7 +7,8 @@ import {
     Button,
     Select,
     createListCollection,
-    Portal
+    Portal,
+    Checkbox
 } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 
@@ -88,17 +89,17 @@ export default function CalendarSettings() {
                     Select calendar(s) to check for conflicts to prevent double bookings.
                 </Text>
 
-                <Flex justify="space-between" align="center">
+                <Flex justify="flex-start" align="center" gap={3}>
+                    <Checkbox.Root
+                        defaultChecked
+                        colorPalette="blue"
+                        size="md"
+                    >
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                    </Checkbox.Root>
                     <Text fontSize="sm" color="gray.700">
                         amaleksandrov94@gmail.com
-                    </Text>
-                    <Text
-                        color="blue.500"
-                        fontSize="sm"
-                        cursor="pointer"
-                        _hover={{ textDecoration: "underline" }}
-                    >
-                        Edit
                     </Text>
                 </Flex>
             </Box>
@@ -154,16 +155,14 @@ export default function CalendarSettings() {
                 {/* Sync options */}
                 <Box paddingTop={3}>
                     <Flex align="start" gap={3}>
-                        <input
-                            type="checkbox"
+                        <Checkbox.Root
                             defaultChecked
-                            style={{
-                                marginTop: '2px',
-                                accentColor: '#3182CE',
-                                width: '16px',
-                                height: '16px'
-                            }}
-                        />
+                            colorPalette="blue"
+                            size="md"
+                        >
+                            <Checkbox.HiddenInput />
+                            <Checkbox.Control />
+                        </Checkbox.Root>
                         <Text fontSize="sm" color="gray.700">
                             Automatically sync cancellations and reschedules from this calendar to Calendly
                         </Text>
