@@ -1,9 +1,9 @@
 import { Box, createListCollection, defineStyle, Field, Input, Text } from "@chakra-ui/react";
 import { Portal } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
-import { useState } from "react";
-import { useMemo } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 
+// Move all utility functions and static data outside the component
 const getBrowserLocale = () => {
     return navigator.language ||
         navigator.languages?.[0] ||
@@ -23,7 +23,7 @@ const getTimezoneDisplayName = (timezone: string, locale: string = 'en-US') => {
         const parts = formatter.formatToParts(new Date());
         const timeZoneName = parts.find(part => part.type === 'timeZoneName')?.value;
         return timeZoneName || timezone;
-    } catch (error) {
+    } catch {
         return timezone;
     }
 };
@@ -47,6 +47,7 @@ const getCurrentTime = () => {
     });
 };
 
+// Move styles outside component
 const floatingStyles = defineStyle({
     bg: "bg",
     px: "0.5",
@@ -65,21 +66,25 @@ const floatingStyles = defineStyle({
         top: "-3",
         insetStart: "2",
     },
-})
+});
 
-// Get all supported timezones (with fallback for older browsers)
+// Get all supported timezones (with fallback for older browsers) - cache this globally
+let cachedTimezones: string[] | null = null;
 const getAllTimezones = (): string[] => {
+    if (cachedTimezones) return cachedTimezones;
+    
     try {
         // Try to use the modern API
         if ('supportedValuesOf' in Intl) {
-            return (Intl as any).supportedValuesOf('timeZone');
+            cachedTimezones = (Intl as any).supportedValuesOf('timeZone');
+            return cachedTimezones!;
         }
-    } catch (error) {
+    } catch {
         console.warn('Intl.supportedValuesOf not supported, using fallback timezone list');
     }
 
     // Fallback list of common timezones
-    return [
+    cachedTimezones = [
         'America/Los_Angeles', 'America/Denver', 'America/Chicago', 'America/New_York',
         'America/Halifax', 'Pacific/Honolulu', 'America/Anchorage', 'UTC',
         'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Asia/Tokyo',
@@ -89,6 +94,7 @@ const getAllTimezones = (): string[] => {
         'Europe/Rome', 'Europe/Madrid', 'Europe/Amsterdam', 'Europe/Stockholm',
         'Asia/Bangkok', 'Asia/Hong_Kong', 'Pacific/Auckland', 'America/Lima'
     ];
+    return cachedTimezones;
 };
 
 interface TimezoneItem {
@@ -98,28 +104,44 @@ interface TimezoneItem {
     time: string;
 }
 
+interface TimezoneInputProps {
+    value?: string;
+    onChange?: (timezone: string) => void;
+}
+
+// Create timezone collection globally and cache it
+let cachedTimezoneCollection: any = null;
 const createTimezoneCollection = () => {
+    if (cachedTimezoneCollection) return cachedTimezoneCollection;
+    
     const allTimezones = getAllTimezones();
+    const locale = getBrowserLocale();
+    
     const timezoneItems: TimezoneItem[] = allTimezones.map((tz: string) => ({
         label: `${tz.replace(/_/g, ' ')} (${getTimezoneDisplayName(tz)})`,
         value: tz,
         searchText: `${tz} ${getTimezoneDisplayName(tz)}`.toLowerCase(),
-        time: new Date(new Date().toLocaleString(getBrowserLocale(), { timeZone: tz })).toLocaleTimeString(getBrowserLocale(), { hour: '2-digit', minute: '2-digit' })
+        time: new Date(new Date().toLocaleString(locale, { timeZone: tz })).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
     }));
 
-    return createListCollection({
+    cachedTimezoneCollection = createListCollection({
         items: timezoneItems.sort((a: TimezoneItem, b: TimezoneItem) => a.label.localeCompare(b.label))
     });
+    
+    return cachedTimezoneCollection;
 };
 
-export default function TimezoneInput() {
-    const currentTimezone = getCurrentTimezone();
-    const locale = getBrowserLocale();
+// Cache current timezone and locale
+const CURRENT_TIMEZONE = getCurrentTimezone();
+const BROWSER_LOCALE = getBrowserLocale();
+
+function TimezoneInput({ value, onChange }: TimezoneInputProps) {
     const [searchQuery, setSearchQuery] = useState("");
 
+    // Get cached timezone collection
     const timezones = useMemo(() => createTimezoneCollection(), []);
 
-    // Filter timezones based on search query
+    // Filter timezones based on search query - memoized for performance
     const filteredTimezones = useMemo(() => {
         if (!searchQuery.trim()) return timezones;
 
@@ -131,16 +153,34 @@ export default function TimezoneInput() {
         return createListCollection({ items: filteredItems });
     }, [timezones, searchQuery]);
 
-    // Check if current timezone exists in our list, otherwise use it as default
-    const defaultTimezone = timezones.items.find((tz: TimezoneItem) => tz.value === currentTimezone)?.value || currentTimezone;
-    
+    // Memoize selected timezone calculation
+    const selectedTimezone = useMemo(() => {
+        return value || (timezones.items.find((tz: TimezoneItem) => tz.value === CURRENT_TIMEZONE)?.value || CURRENT_TIMEZONE);
+    }, [value, timezones.items]);
+
+    // Memoize change handlers
+    const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    }, []);
+
+    const handleValueChange = useCallback((details: { value: string[] }) => {
+        onChange?.(details.value[0]);
+    }, [onChange]);
+
+    // Memoize current time display
+    const currentTimeDisplay = useMemo(() => getCurrentTime(), []);
+    const currentTimezoneDisplay = useMemo(() => 
+        `${CURRENT_TIMEZONE} ${getTimezoneDisplayName(CURRENT_TIMEZONE, BROWSER_LOCALE)}`, 
+        []
+    );
 
     return (
         <Field.Root>
             <Field.Label css={floatingStyles}>Timezone</Field.Label>
             <Select.Root
                 collection={filteredTimezones}
-                defaultValue={[defaultTimezone]}
+                value={[selectedTimezone]}
+                onValueChange={handleValueChange}
                 className='peer'
                 size="lg"
                 css={{ "--focus-color": "blue" }}
@@ -166,7 +206,7 @@ export default function TimezoneInput() {
                                 <Input
                                     placeholder="Search timezones"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={handleSearchChange}
                                     className='peer'
                                     size="xl"
                                     css={{ "--focus-color": "blue" }}
@@ -196,8 +236,11 @@ export default function TimezoneInput() {
                 </Portal>
             </Select.Root>
             <Text fontSize="xs" color="gray.500" mt={1}>
-                Current time: {getCurrentTime()} · ({getCurrentTimezone()} {getTimezoneDisplayName(getCurrentTimezone(), locale)})
+                Current time: {currentTimeDisplay} · ({currentTimezoneDisplay})
             </Text>
         </Field.Root>
     )
 }
+
+// Export memoized component
+export default memo(TimezoneInput);

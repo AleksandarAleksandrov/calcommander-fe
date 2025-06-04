@@ -18,11 +18,13 @@ const onboardingSlice = createSlice({
     initialState: {
         step: OnboardingStep.USER_INFO,
         isLoading: true,
+        hasInitialized: false,
         calendars: [],
         availability: [],
         userData: {
-            slug: null,
-            name: null,
+            slug: '',
+            email: '',
+            name: '',
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         }
     },
@@ -30,8 +32,14 @@ const onboardingSlice = createSlice({
         setStep: (state, action) => {
             state.step = action.payload;
         },
-        setUserData: (state, action) => {
-            state.userData = action.payload;
+        setSlug: (state, action) => {
+            state.userData.slug = action.payload;
+        },
+        setName: (state, action) => {
+            state.userData.name = action.payload;
+        },
+        setTimezone: (state, action) => {
+            state.userData.timezone = action.payload;
         },
         setCalendars: (state, action) => {
             state.calendars = action.payload;
@@ -44,6 +52,7 @@ const onboardingSlice = createSlice({
         builder
             .addCase(GET_ONBOARDING_DATA_REQUEST, (state, action) => {
                 state.isLoading = true;
+                state.hasInitialized = true;
             })
             .addCase(GET_ONBOARDING_DATA_SUCCESS, (state, action: any) => {
                 state.isLoading = false;
@@ -58,7 +67,7 @@ const onboardingSlice = createSlice({
     }
 });
 
-export const { setStep, setUserData, setCalendars, setAvailability } = onboardingSlice.actions;
+export const { setStep, setSlug, setName, setTimezone, setCalendars, setAvailability } = onboardingSlice.actions;
 
 export const getOnboardingData = createApiThunk(GET_ONBOARDING_DATA, '/onboarding');
 

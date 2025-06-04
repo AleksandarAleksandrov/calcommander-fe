@@ -1,9 +1,10 @@
 import { Box } from '@chakra-ui/react';
 import UserInfoStep from './UserInfoStep';
 import OnboardingWizardControl from './OnboardingWizardControl';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import type { RootState } from '@/store';
-import { OnboardingStep } from '@/store/onboardingSlice';
+import { OnboardingStep, getOnboardingData } from '@/store/onboardingSlice';
 import UserInfoHeader from './UserInfoHeader';
 import AvailabilityStep from './AvailabilityStep';
 import CalendarSettings from './CalendarSettings';
@@ -11,6 +12,14 @@ import CalendarSettings from './CalendarSettings';
 export default function OnboardingPage() {
 
     const step = useSelector((state: RootState) => state.onboarding.step);
+    const hasInitialized = useSelector((state: RootState) => state.onboarding.hasInitialized);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (!hasInitialized) {
+            dispatch(getOnboardingData() as any);
+        }
+    }, [hasInitialized, dispatch]);
 
     return (
         <Box minH="100vh" bg="gray.50" display="flex" flexDirection="column">
