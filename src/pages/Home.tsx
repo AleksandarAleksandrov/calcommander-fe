@@ -1,15 +1,14 @@
-import React from 'react';
+import type { RootState } from '@/store';
+import { useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
-const Home: React.FC = () => {
-  return (
-    <div>
-      <h1>Home Page</h1>
-      <p>Welcome to CalCommander</p>
-      <div>
-        <h2>Redux Counter Example</h2>
-      </div>
-    </div>
-  );
+export default function Home() {
+  const { hasCompletedOnboarding } = useSelector((state: RootState) => state.user);
+
+  // Redirect based on onboarding status
+  if (hasCompletedOnboarding) {
+    return <div>Home</div>
+  } else {
+    return <Navigate to="/onboarding" replace />;
+  }
 };
-
-export default Home; 

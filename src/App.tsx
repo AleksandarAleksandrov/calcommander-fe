@@ -66,9 +66,9 @@ const router = createBrowserRouter([
       {
         path: "onboarding",
         element: (
-          <PublicRoute>
+          <ProtectedRoute>
             <OnboardingPage />
-          </PublicRoute>
+          </ProtectedRoute>
         )
       }
     ]

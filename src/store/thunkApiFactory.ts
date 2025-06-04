@@ -1,3 +1,5 @@
+import { clearAuthData } from "@/utils/auth";
+
 // Enhanced API thunk factory
 export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET', options: any = {}) => {
     return (data?: T) => async (dispatch: any, getState: any) => {
@@ -31,8 +33,7 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
         }
         
         // Get auth token from state if needed
-        const state = getState();
-        const token = state.auth?.token;
+        const token = localStorage.getItem('jwt');
         
         if (token) {
           fetchOptions.headers.Authorization = `Bearer ${token}`;
@@ -41,7 +42,9 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
         let fullPath = `http://localhost:8080/api/v1${endpoint}`;
         if(['GET', 'DELETE'].includes(method)) {
           const queryParamsString = new URLSearchParams(data as any).toString();
-          fullPath += `?${queryParamsString}`;
+          if (queryParamsString) {
+            fullPath += `?${queryParamsString}`;
+          }
         }
 
         const response = await fetch(fullPath, fetchOptions);
@@ -50,6 +53,11 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
         let responseData = null;
         const contentLength = response.headers.get('content-length');
         const contentType = response.headers.get('content-type');
+
+        if(response.status === 401) {
+          clearAuthData();
+          window.location.href = '/';
+        }
         
         // Only attempt to parse JSON if there's likely to be content
         if (response.status !== 204 && // No Content
@@ -93,7 +101,7 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
           }
         });
         
-        return responseData;
+        return responseData.data;
       } catch (error: any) {
         const endTime = performance.now();
         const duration = endTime - startTime;
