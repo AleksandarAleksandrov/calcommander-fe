@@ -86,7 +86,7 @@ export const createApiThunk = <T>(type: string, endpoint: string, method = 'GET'
             requestId,
             endpoint,
             method,
-            data: responseData,
+            data: responseData.data,
             duration,
             status: response.status,
             timestamp: new Date().toISOString()
