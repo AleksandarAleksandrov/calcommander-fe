@@ -41,6 +41,9 @@ const onboardingSlice = createSlice({
         setTimezone: (state, action) => {
             state.userData.timezone = action.payload;
         },
+        addCalendar: (state, action: any) => {
+            state.calendars.push(action.payload);
+        },
         setUserDataAndStep: (state, action) => {
             const { slug, name, timezone, step } = action.payload;
             state.userData.slug = slug;

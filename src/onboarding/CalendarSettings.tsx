@@ -11,38 +11,45 @@ import {
     Checkbox,
     IconButton
 } from "@chakra-ui/react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
+import type { RootState } from "@/store";
+import { useGoogleLogin } from "@react-oauth/google";
+
+const selectCalendars = (state: RootState) => state.onboarding.calendars;
 
 export default function CalendarSettings() {
 
+    const googleLogin = useGoogleLogin({
+        ux_mode: 'popup',
+        redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI,
+        scope: "https://www.googleapis.com/auth/calendar",
+        flow: 'auth-code',
+        onSuccess: (codeResponse) => {
+            console.log(codeResponse);
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
     const dispatch = useDispatch();
+    
+    const storeCalendars = useSelector(selectCalendars);
+
     const currentDay = new Date().getDate();
     const MAX_CALENDARS = 7;
 
     // State to manage calendars
-    const [calendars, setCalendars] = useState([
-        {
-            id: 1,
-            provider: "Google",
-            email: "calendar1@gmail.com",
-            connected: true
-        }
-    ]);
+    const [calendars, setCalendars] = useState(JSON.parse(JSON.stringify(storeCalendars)));
 
     // Function to add new calendar
     const addCalendar = () => {
         if (calendars.length >= MAX_CALENDARS) {
             return; // Don't add more than MAX_CALENDARS calendars
         }
-        const newCalendar = {
-            id: calendars.length + 1,
-            provider: "Google",
-            email: `calendar${calendars.length + 1}@gmail.com`,
-            connected: true
-        };
-        setCalendars([...calendars, newCalendar]);
+        setCalendars([...calendars]);
     };
 
     // Function to delete a calendar
@@ -52,8 +59,8 @@ export default function CalendarSettings() {
 
     const calendarOptions = createListCollection({
         items: calendars.map(calendar => ({
-            label: calendar.email,
-            value: calendar.email
+            label: calendar.userEmail,
+            value: calendar.userEmail
         }))
     });
 
@@ -95,7 +102,10 @@ export default function CalendarSettings() {
                                         <Box>
                                             <Text fontWeight="medium" color="gray.800">{calendar.provider}</Text>
                                             <Text fontSize="sm" color="gray.600">
-                                                {calendar.email}
+                                                {calendar.userName}
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.600">
+                                                {calendar.userEmail}
                                             </Text>
                                         </Box>
                                     </Flex>
@@ -104,7 +114,7 @@ export default function CalendarSettings() {
                                             border="1px solid"
                                             borderColor="green.400"
                                             borderRadius="md" fontSize="sm">
-                                            {calendar.connected ? "Connected" : "Disconnected"}
+                                            {calendar.status === "ACTIVE" ? "Connected" : "Disconnected"}
                                         </Box>
                                         <IconButton
                                             aria-label="Delete calendar"
@@ -159,7 +169,7 @@ export default function CalendarSettings() {
                         borderRadius="md"
                         colorPalette="blue"
                         flex="0 0 auto"
-                        onClick={addCalendar}
+                        onClick={() => googleLogin()}
                         disabled={calendars.length >= MAX_CALENDARS}
                     >
                         Add calendar
@@ -183,7 +193,7 @@ export default function CalendarSettings() {
                     <>
                         <Select.Root
                             collection={calendarOptions}
-                            defaultValue={[calendars[0]?.email]}
+                            defaultValue={[calendars[0]?.userEmail]}
                             className='peer'
                             size="lg"
                             css={{ "--focus-color": "blue" }}
