@@ -41,6 +41,13 @@ const onboardingSlice = createSlice({
         setTimezone: (state, action) => {
             state.userData.timezone = action.payload;
         },
+        setUserDataAndStep: (state, action) => {
+            const { slug, name, timezone, step } = action.payload;
+            state.userData.slug = slug;
+            state.userData.name = name;
+            state.userData.timezone = timezone;
+            state.step = step;
+        },
         setCalendars: (state, action) => {
             state.calendars = action.payload;
         },
@@ -67,7 +74,7 @@ const onboardingSlice = createSlice({
     }
 });
 
-export const { setStep, setSlug, setName, setTimezone, setCalendars, setAvailability } = onboardingSlice.actions;
+export const { setStep, setSlug, setName, setTimezone, setUserDataAndStep, setCalendars, setAvailability } = onboardingSlice.actions;
 
 export const getOnboardingData = createApiThunk(GET_ONBOARDING_DATA, '/onboarding');
 

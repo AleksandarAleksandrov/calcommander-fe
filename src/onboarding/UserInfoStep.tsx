@@ -3,8 +3,7 @@ import { FiArrowRight } from "react-icons/fi";
 import TimezoneInput from "@/components/TimezoneInput";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useMemo, useCallback, memo, useEffect } from "react";
-import { OnboardingStep, setName, setSlug, setTimezone } from "@/store/onboardingSlice";
-import { setStep } from "@/store/onboardingSlice";
+import { OnboardingStep, setUserDataAndStep } from "@/store/onboardingSlice";
 import type { RootState } from "@/store";
 
 // Move styles outside component to prevent recreation on every render
@@ -52,13 +51,14 @@ function UserInfoStep() {
     // Memoize the URL slug to prevent unnecessary re-calculations
     const urlSlug = useMemo(() => import.meta.env.VITE_APP_URL_SLUG, []);
 
-    // Memoize the next step handler
+    // Memoize the next step handler - now uses combined action
     const handleNextStep = useCallback(() => {
-        // Dispatch all updates to the store at once
-        dispatch(setSlug(username));
-        dispatch(setName(fullName));
-        dispatch(setTimezone(timezone));
-        dispatch(setStep(OnboardingStep.CALENDAR_SETTINGS));
+        dispatch(setUserDataAndStep({
+            slug: username,
+            name: fullName,
+            timezone: timezone,
+            step: OnboardingStep.CALENDAR_SETTINGS
+        }));
     }, [dispatch, username, fullName, timezone]);
 
     // Memoize change handlers to prevent unnecessary re-renders of child components
