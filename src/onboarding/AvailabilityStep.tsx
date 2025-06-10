@@ -1,9 +1,10 @@
 import { setStep } from "@/store/onboardingSlice";
 import { OnboardingStep } from "@/store/onboardingSlice";
 import { Box, Text, Stack, Button, IconButton, Switch, Select, createListCollection, Portal, Checkbox } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiPlus, FiCopy, FiX } from "react-icons/fi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 interface TimeSlot {
     startTime: string;
@@ -113,8 +114,48 @@ const getFilteredEndTimeOptions = (startTime: string, timeSlots: TimeSlot[], cur
     });
 };
 
+// Helper function to transform store availability array to component format
+const transformAvailabilityToObject = (availabilityArray: any[]): Record<string, DayAvailability> => {
+    // If array is empty or invalid, return default availability
+    if (!availabilityArray || availabilityArray.length === 0) {
+        return {
+            Monday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Tuesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Thursday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Friday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Saturday: { enabled: false, timeSlots: [] },
+            Sunday: { enabled: false, timeSlots: [] }
+        };
+    }
+
+    // Transform array to object format
+    const availabilityObject: Record<string, DayAvailability> = {};
+    
+    // Initialize all days with default values first
+    DAYS.forEach(day => {
+        availabilityObject[day] = { enabled: false, timeSlots: [] };
+    });
+
+    // Override with actual data from store
+    availabilityArray.forEach((dayData: any) => {
+        if (dayData.day && DAYS.includes(dayData.day)) {
+            availabilityObject[dayData.day] = {
+                enabled: dayData.enabled || false,
+                timeSlots: dayData.timeSlots || []
+            };
+        }
+    });
+
+    return availabilityObject;
+};
+
 export default function AvailabilityStep() {
-    const [availability, setAvailability] = useState<Record<string, DayAvailability>>({
+    const dispatch = useDispatch();
+    const storeAvailability = useSelector((state: RootState) => state.onboarding.availability);
+
+    // Initialize with default availability to prevent undefined errors
+    const getDefaultAvailability = (): Record<string, DayAvailability> => ({
         Monday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
         Tuesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
         Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
@@ -123,6 +164,14 @@ export default function AvailabilityStep() {
         Saturday: { enabled: false, timeSlots: [] },
         Sunday: { enabled: false, timeSlots: [] }
     });
+
+    const [availability, setAvailability] = useState<Record<string, DayAvailability>>(getDefaultAvailability());
+
+    // Initialize local state with data from store
+    useEffect(() => {
+        const transformedAvailability = transformAvailabilityToObject(storeAvailability);
+        setAvailability(transformedAvailability);
+    }, [storeAvailability]);
 
     const [copyDialog, setCopyDialog] = useState<{ isOpen: boolean; sourceDay: string; position?: { top: number; left: number } }>({
         isOpen: false,
@@ -356,51 +405,53 @@ export default function AvailabilityStep() {
         closeCopyDialog();
     };
 
-    const dispatch = useDispatch();
-
     return (
         <Stack gap={4}>
-            {DAYS.map((day) => (
-                <Box
-                    key={day}
-                    p={4}
-                    borderRadius="lg"
-                    border="1px solid"
-                    borderColor={availability[day].enabled ? "gray.100" : "gray.200"}
-                >
-                    <Stack direction="row" gap={4} align="flex-start">
-                        <Stack direction="row" gap={4} align="center">
-                            {/* Custom Switch Toggle */}
+            {DAYS.map((day) => {
+                // Safety check to prevent undefined errors
+                const dayAvailability = availability[day] || { enabled: false, timeSlots: [] };
+                
+                return (
+                    <Box
+                        key={day}
+                        p={4}
+                        borderRadius="lg"
+                        border="1px solid"
+                        borderColor={dayAvailability.enabled ? "gray.100" : "gray.200"}
+                    >
+                                            <Stack direction="row" gap={4} align="flex-start">
+                            <Stack direction="row" gap={4} align="center">
+                                {/* Custom Switch Toggle */}
 
-                            <Switch.Root
-                                size="lg"
-                                checked={availability[day].enabled}
-                                colorPalette="blue"
-                                onCheckedChange={() => {
-                                    handleDayToggle(day);
-                                }}>
-                                <Switch.HiddenInput />
-                                <Switch.Control />
-                            </Switch.Root>
+                                <Switch.Root
+                                    size="lg"
+                                    checked={dayAvailability.enabled}
+                                    colorPalette="blue"
+                                    onCheckedChange={() => {
+                                        handleDayToggle(day);
+                                    }}>
+                                    <Switch.HiddenInput />
+                                    <Switch.Control />
+                                </Switch.Root>
 
-                            <Text
-                                fontSize="md"
-                                fontWeight="medium"
-                                width="90px"
-                                color={availability[day].enabled ? "gray.800" : "gray.400"}
-                            >
-                                {day}
-                            </Text>
-                        </Stack>
+                                <Text
+                                    fontSize="md"
+                                    fontWeight="medium"
+                                    width="90px"
+                                    color={dayAvailability.enabled ? "gray.800" : "gray.400"}
+                                >
+                                    {day}
+                                </Text>
+                            </Stack>
 
-                        {availability[day].enabled && (
-                            <Stack gap={2} align="stretch" flex={1}>
-                                {availability[day].timeSlots.map((slot, slotIndex) => (
+                            {dayAvailability.enabled && (
+                                <Stack gap={2} align="stretch" flex={1}>
+                                    {dayAvailability.timeSlots.map((slot, slotIndex) => (
                                     <Stack key={slotIndex} direction="row" gap={3} align="center">
                                         <Select.Root
                                             value={[slot.startTime]}
                                             onValueChange={(details) => handleTimeChange(day, slotIndex, 'startTime', details.value)}
-                                            collection={createStartTimeCollection(slot.endTime, availability[day].timeSlots, slotIndex)}
+                                            collection={createStartTimeCollection(slot.endTime, dayAvailability.timeSlots, slotIndex)}
                                             size="md"
                                             positioning={{ strategy: "absolute" }}
                                         >
@@ -426,7 +477,7 @@ export default function AvailabilityStep() {
                                                         overflowY="auto"
                                                         zIndex={1000}
                                                     >
-                                                        {getFilteredStartTimeOptions(slot.endTime, availability[day].timeSlots, slotIndex).map((time) => (
+                                                        {getFilteredStartTimeOptions(slot.endTime, dayAvailability.timeSlots, slotIndex).map((time) => (
                                                             <Select.Item key={time.value} item={time}>
                                                                 <Select.ItemText>{time.label}</Select.ItemText>
                                                             </Select.Item>
@@ -439,7 +490,7 @@ export default function AvailabilityStep() {
                                         <Select.Root
                                             value={[slot.endTime]}
                                             onValueChange={(details) => handleTimeChange(day, slotIndex, 'endTime', details.value)}
-                                            collection={createEndTimeCollection(slot.startTime, availability[day].timeSlots, slotIndex)}
+                                            collection={createEndTimeCollection(slot.startTime, dayAvailability.timeSlots, slotIndex)}
                                             size="md"
                                             positioning={{ strategy: "absolute" }}
                                         >
@@ -465,7 +516,7 @@ export default function AvailabilityStep() {
                                                         overflowY="auto"
                                                         zIndex={1000}
                                                     >
-                                                        {getFilteredEndTimeOptions(slot.startTime, availability[day].timeSlots, slotIndex).map((time) => (
+                                                        {getFilteredEndTimeOptions(slot.startTime, dayAvailability.timeSlots, slotIndex).map((time) => (
                                                             <Select.Item key={time.value} item={time}>
                                                                 <Select.ItemText>{time.label}</Select.ItemText>
                                                             </Select.Item>
@@ -479,9 +530,9 @@ export default function AvailabilityStep() {
                                             aria-label="Add time slot"
                                             size="sm"
                                             variant="ghost"
-                                            visibility={slotIndex === availability[day].timeSlots.length - 1 ? "visible" : "hidden"}
+                                            visibility={slotIndex === dayAvailability.timeSlots.length - 1 ? "visible" : "hidden"}
                                             disabled={(() => {
-                                                const lastSlot = availability[day].timeSlots[availability[day].timeSlots.length - 1];
+                                                const lastSlot = dayAvailability.timeSlots[dayAvailability.timeSlots.length - 1];
                                                 const availableAfterLastSlot = TIME_OPTIONS.filter(option =>
                                                     timeToMinutes(option.value) > timeToMinutes(lastSlot.endTime)
                                                 );
@@ -498,7 +549,7 @@ export default function AvailabilityStep() {
                                         <IconButton
                                             aria-label="Delete time slot"
                                             size="sm"
-                                            disabled={availability[day].timeSlots.length === 1}
+                                            disabled={dayAvailability.timeSlots.length === 1}
                                             variant="ghost"
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -526,7 +577,8 @@ export default function AvailabilityStep() {
                         )}
                     </Stack>
                 </Box>
-            ))}
+                );
+            })}
 
             <Stack direction="row" gap={4} w="100%">
                 <Button
