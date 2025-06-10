@@ -28,10 +28,7 @@ export default function CalendarSettings() {
         scope: "https://www.googleapis.com/auth/calendar",
         flow: 'auth-code',
         onSuccess: async (codeResponse) => {
-           const calendar = await dispatch(addCalendar({credential: codeResponse.code}));
-        },
-        onError: (error) => {
-            console.log(error);
+           dispatch(addCalendar({credential: codeResponse.code}));
         }
     });
     
@@ -43,9 +40,28 @@ export default function CalendarSettings() {
     // State to manage calendars
     const [calendars, setCalendars] = useState(JSON.parse(JSON.stringify(storeCalendars)));
 
+    // State for delete confirmation dialog
+    const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; calendarId: number | null }>({
+        isOpen: false,
+        calendarId: null
+    });
+
+    // Function to show delete confirmation
+    const showDeleteConfirmation = (calendarId: number) => {
+        setDeleteDialog({ isOpen: true, calendarId });
+    };
+
+    // Function to close delete confirmation
+    const closeDeleteConfirmation = () => {
+        setDeleteDialog({ isOpen: false, calendarId: null });
+    };
+
     // Function to delete a calendar
-    const deleteCalendar = (calendarId: number) => {
-        setCalendars(calendars.filter(calendar => calendar.id !== calendarId));
+    const deleteCalendar = () => {
+        if (deleteDialog.calendarId !== null) {
+            setCalendars(calendars.filter((calendar: any) => calendar.id !== deleteDialog.calendarId));
+            closeDeleteConfirmation();
+        }
     };
 
     const calendarOptions = createListCollection({
@@ -111,7 +127,7 @@ export default function CalendarSettings() {
                                             aria-label="Delete calendar"
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() => deleteCalendar(calendar.id)}
+                                            onClick={() => showDeleteConfirmation(calendar.id)}
                                         >
                                             <FiTrash2 size={16} />
                                         </IconButton>
@@ -265,6 +281,71 @@ export default function CalendarSettings() {
                     Next Step →
                 </Button>
             </Stack>
+
+            {/* Delete Confirmation Dialog */}
+            {deleteDialog.isOpen && (
+                <Portal>
+                    <Box
+                        position="fixed"
+                        top="0"
+                        left="0"
+                        right="0"
+                        bottom="0"
+                        bg="blackAlpha.600"
+                        zIndex={1400}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        onClick={closeDeleteConfirmation}
+                    />
+                    <Box
+                        position="fixed"
+                        top="50%"
+                        left="50%"
+                        transform="translate(-50%, -50%)"
+                        bg="white"
+                        borderRadius="lg"
+                        border="1px solid"
+                        borderColor="gray.200"
+                        p={6}
+                        boxShadow="xl"
+                        maxW="400px"
+                        w="90%"
+                        zIndex={1500}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Stack gap={4}>
+                            <Box>
+                                <Text fontSize="lg" fontWeight="semibold" color="gray.800" mb={2}>
+                                    Delete Calendar
+                                </Text>
+                                <Text fontSize="sm" color="gray.600">
+                                    Are you sure you want to delete this calendar? This action cannot be undone.
+                                </Text>
+                            </Box>
+                            
+                            <Stack direction="row" gap={3} justify="flex-end">
+                                <Button
+                                    size="md"
+                                    variant="outline"
+                                    borderRadius="md"
+                                    onClick={closeDeleteConfirmation}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    size="md"
+                                    colorPalette="red"
+                                    borderRadius="md"
+                                    onClick={deleteCalendar}
+                                >
+                                    Delete
+                                </Button>
+                            </Stack>
+                        </Stack>
+                    </Box>
+                </Portal>
+            )}
         </>
     )
 }
