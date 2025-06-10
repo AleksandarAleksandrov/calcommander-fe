@@ -129,6 +129,7 @@ export default function CalendarSettings() {
                                             aria-label="Delete calendar"
                                             variant="ghost"
                                             size="sm"
+                                            disabled={calendars.length === 1}
                                             onClick={() => showDeleteConfirmation(calendar.id)}
                                         >
                                             <FiTrash2 size={16} />
