@@ -1,4 +1,4 @@
-import { setStep } from "@/store/onboardingSlice";
+import { setAvailabilityAndStep, setStep } from "@/store/onboardingSlice";
 import { OnboardingStep } from "@/store/onboardingSlice";
 import { Box, Text, Stack, Button, IconButton, Switch, Select, createListCollection, Portal, Checkbox } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
@@ -114,42 +114,6 @@ const getFilteredEndTimeOptions = (startTime: string, timeSlots: TimeSlot[], cur
     });
 };
 
-// Helper function to transform store availability array to component format
-const transformAvailabilityToObject = (availabilityArray: any[]): Record<string, DayAvailability> => {
-    // If array is empty or invalid, return default availability
-    if (!availabilityArray || availabilityArray.length === 0) {
-        return {
-            Monday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
-            Tuesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
-            Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
-            Thursday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
-            Friday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
-            Saturday: { enabled: false, timeSlots: [] },
-            Sunday: { enabled: false, timeSlots: [] }
-        };
-    }
-
-    // Transform array to object format
-    const availabilityObject: Record<string, DayAvailability> = {};
-    
-    // Initialize all days with default values first
-    DAYS.forEach(day => {
-        availabilityObject[day] = { enabled: false, timeSlots: [] };
-    });
-
-    // Override with actual data from store
-    availabilityArray.forEach((dayData: any) => {
-        if (dayData.day && DAYS.includes(dayData.day)) {
-            availabilityObject[dayData.day] = {
-                enabled: dayData.enabled || false,
-                timeSlots: dayData.timeSlots || []
-            };
-        }
-    });
-
-    return availabilityObject;
-};
-
 export default function AvailabilityStep() {
     const dispatch = useDispatch();
     const storeAvailability = useSelector((state: RootState) => state.onboarding.availability);
@@ -169,8 +133,7 @@ export default function AvailabilityStep() {
 
     // Initialize local state with data from store
     useEffect(() => {
-        const transformedAvailability = transformAvailabilityToObject(storeAvailability);
-        setAvailability(transformedAvailability);
+        setAvailability(storeAvailability);
     }, [storeAvailability]);
 
     const [copyDialog, setCopyDialog] = useState<{ isOpen: boolean; sourceDay: string; position?: { top: number; left: number } }>({
@@ -587,7 +550,7 @@ export default function AvailabilityStep() {
                     borderRadius="md"
                     flex="0 0 auto"
                     minW="120px"
-                    onClick={() => dispatch(setStep(OnboardingStep.CALENDAR_SETTINGS))}
+                    onClick={() => dispatch(setAvailabilityAndStep({ availability, step: OnboardingStep.CALENDAR_SETTINGS }))}
                 >
                     Back
                 </Button>

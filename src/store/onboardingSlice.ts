@@ -25,7 +25,13 @@ const onboardingSlice = createSlice({
         isLoading: true,
         hasInitialized: false,
         calendars: [],
-        availability: [],
+        availability: {
+            Monday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Tuesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Thursday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Friday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+        },
         userData: {
             slug: '',
             email: '',
@@ -59,6 +65,11 @@ const onboardingSlice = createSlice({
             state.calendars = calendars;
             state.step = step;
         },
+        setAvailabilityAndStep: (state, action) => {
+            const { availability, step } = action.payload;
+            state.availability = availability;
+            state.step = step;
+        },
         setPrimaryCalendarId: (state, action) => {
             state.userData.primaryCalendarId = action.payload;
         },
@@ -78,7 +89,13 @@ const onboardingSlice = createSlice({
             .addCase(GET_ONBOARDING_DATA_SUCCESS, (state, action: any) => {
                 state.isLoading = false;
                 state.calendars = action.payload.data.calendars;
-                state.availability = action.payload.data.availability;
+                state.availability = !Object.keys(action.payload.data.availability).length ? {
+                    Monday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+                    Tuesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+                    Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+                    Thursday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+                    Friday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+                } : action.payload.data.availability;
                 state.userData = action.payload.data.userData;
             })
             .addCase(GET_ONBOARDING_DATA_FAILURE, (state, action) => {
@@ -94,7 +111,7 @@ const onboardingSlice = createSlice({
     }
 });
 
-export const { setStep, setSlug, setName, setTimezone, setUserDataAndStep, setCalendarsAndStep, setAvailability, setPrimaryCalendarId } = onboardingSlice.actions;
+export const { setStep, setSlug, setName, setTimezone, setUserDataAndStep, setCalendarsAndStep, setAvailability, setPrimaryCalendarId, setAvailabilityAndStep } = onboardingSlice.actions;
 
 export const getOnboardingData = createApiThunk(GET_ONBOARDING_DATA, '/onboarding');
 
