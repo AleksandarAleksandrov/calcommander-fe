@@ -76,7 +76,7 @@ export default function CalendarSettings() {
             {/* Your calendar section */}
             <Box mb={8}>
                 <Text fontSize="xl" fontWeight="semibold" mb={4} color="gray.800">
-                    Your calendar(s)
+                    Your calendar{calendars.length > 1 ? 's' : ''}
                 </Text>
 
                 <Stack gap={3} mb={4}>
@@ -111,7 +111,7 @@ export default function CalendarSettings() {
                                             <Text fontSize="sm" color="gray.600">
                                                 {calendar.userName}
                                             </Text>
-                                            <Text fontSize="sm" color="gray.600">
+                                            <Text fontSize="sm" color="gray.600" fontWeight="bold">
                                                 {calendar.userEmail}
                                             </Text>
                                         </Box>
@@ -317,10 +317,13 @@ export default function CalendarSettings() {
                         <Stack gap={4}>
                             <Box>
                                 <Text fontSize="lg" fontWeight="semibold" color="gray.800" mb={2}>
-                                    Delete Calendar
+                                    Remove Calendar
                                 </Text>
                                 <Text fontSize="sm" color="gray.600">
-                                    Are you sure you want to delete this calendar? This action cannot be undone.
+                                    Are you sure you want to remove this calendar?
+                                </Text>
+                                <Text fontSize="sm" color="gray.600" fontWeight="bold">
+                                    You can always add it back later.
                                 </Text>
                             </Box>
                             
@@ -339,7 +342,7 @@ export default function CalendarSettings() {
                                     borderRadius="md"
                                     onClick={deleteCalendar}
                                 >
-                                    Delete
+                                    Remove
                                 </Button>
                             </Stack>
                         </Stack>
