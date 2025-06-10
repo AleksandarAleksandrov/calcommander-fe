@@ -207,7 +207,10 @@ export default function CalendarSettings() {
                         <Select.Root
                             collection={calendarOptions}
                             defaultValue={[primaryCalendarId]}
-                            onValueChange={(value) => dispatch(setPrimaryCalendarId(value.value[0]))}
+                            onValueChange={(value) => {
+                                dispatch(setPrimaryCalendarId(value.value[0]));
+                                setCalendars(calendars.map((c: any) => c.id === value.value[0] ? { ...c, backwardsEventSync: true } : { ...c, backwardsEventSync: false }));
+                            }}
                             className='peer'
                             size="lg"
                             css={{ "--focus-color": "blue" }}
@@ -246,9 +249,13 @@ export default function CalendarSettings() {
                         <Box paddingTop={3}>
                             <Flex align="start" gap={3}>
                                 <Checkbox.Root
-                                    defaultChecked
+                                    disabled={!primaryCalendarId}
+                                    checked={calendars.find((c: any) => c.id === primaryCalendarId)?.backwardsEventSync}
                                     colorPalette="blue"
                                     size="md"
+                                    onCheckedChange={({checked}) => {
+                                        setCalendars(calendars.map((c: any) => c.id === primaryCalendarId ? { ...c, backwardsEventSync: checked } : { ...c, backwardsEventSync: false }));
+                                    }}
                                 >
                                     <Checkbox.HiddenInput />
                                     <Checkbox.Control />
