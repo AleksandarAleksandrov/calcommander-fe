@@ -90,7 +90,7 @@ const onboardingSlice = createSlice({
             .addCase(GET_ONBOARDING_DATA_SUCCESS, (state, action: any) => {
                 state.isLoading = false;
                 state.calendars = action.payload.data.calendars;
-                state.availability = !Object.keys(action.payload.data.availability).length ? {
+                state.availability = !Object.keys(action.payload.data.availability.availability).length ? {
                     Monday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
                     Tuesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
                     Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
