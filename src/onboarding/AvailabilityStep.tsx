@@ -129,12 +129,7 @@ export default function AvailabilityStep() {
         Sunday: { enabled: false, timeSlots: [] }
     });
 
-    const [availability, setAvailability] = useState<Record<string, DayAvailability>>(getDefaultAvailability());
-
-    // Initialize local state with data from store
-    useEffect(() => {
-        setAvailability(storeAvailability);
-    }, [storeAvailability]);
+    const [availability, setAvailability] = useState<Record<string, DayAvailability>>(storeAvailability || getDefaultAvailability());
 
     const [copyDialog, setCopyDialog] = useState<{ isOpen: boolean; sourceDay: string; position?: { top: number; left: number } }>({
         isOpen: false,
