@@ -1,4 +1,4 @@
-import { OnboardingStep, setStep } from "@/store/onboardingSlice";
+import { addCalendar, OnboardingStep, setStep } from "@/store/onboardingSlice";
 import {
     Box,
     Text,
@@ -21,20 +21,19 @@ const selectCalendars = (state: RootState) => state.onboarding.calendars;
 
 export default function CalendarSettings() {
 
+    const dispatch = useDispatch();
+
     const googleLogin = useGoogleLogin({
         ux_mode: 'popup',
-        redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI,
         scope: "https://www.googleapis.com/auth/calendar",
         flow: 'auth-code',
-        onSuccess: (codeResponse) => {
-            console.log(codeResponse);
+        onSuccess: async (codeResponse) => {
+           const calendar = await dispatch(addCalendar({credential: codeResponse.code}));
         },
         onError: (error) => {
             console.log(error);
         }
     });
-
-    const dispatch = useDispatch();
     
     const storeCalendars = useSelector(selectCalendars);
 
@@ -43,14 +42,6 @@ export default function CalendarSettings() {
 
     // State to manage calendars
     const [calendars, setCalendars] = useState(JSON.parse(JSON.stringify(storeCalendars)));
-
-    // Function to add new calendar
-    const addCalendar = () => {
-        if (calendars.length >= MAX_CALENDARS) {
-            return; // Don't add more than MAX_CALENDARS calendars
-        }
-        setCalendars([...calendars]);
-    };
 
     // Function to delete a calendar
     const deleteCalendar = (calendarId: number) => {
