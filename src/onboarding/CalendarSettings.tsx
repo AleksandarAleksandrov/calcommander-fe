@@ -1,4 +1,4 @@
-import { addCalendar, OnboardingStep, setStep } from "@/store/onboardingSlice";
+import { addCalendar, OnboardingStep, setPrimaryCalendarId, setStep, setCalendarsAndStep } from "@/store/onboardingSlice";
 import {
     Box,
     Text,
@@ -18,6 +18,7 @@ import type { RootState } from "@/store";
 import { useGoogleLogin } from "@react-oauth/google";
 
 const selectCalendars = (state: RootState) => state.onboarding.calendars;
+const selectUserData = (state: RootState) => state.onboarding.userData;
 
 export default function CalendarSettings() {
 
@@ -28,11 +29,12 @@ export default function CalendarSettings() {
         scope: "https://www.googleapis.com/auth/calendar",
         flow: 'auth-code',
         onSuccess: async (codeResponse) => {
-           dispatch(addCalendar({credential: codeResponse.code}));
+            dispatch(addCalendar({ credential: codeResponse.code }));
         }
     });
-    
+
     const storeCalendars = useSelector(selectCalendars);
+    const { primaryCalendarId } = useSelector(selectUserData);
 
     const currentDay = new Date().getDate();
     const MAX_CALENDARS = 7;
@@ -67,7 +69,7 @@ export default function CalendarSettings() {
     const calendarOptions = createListCollection({
         items: calendars.map(calendar => ({
             label: calendar.userEmail,
-            value: calendar.userEmail
+            value: calendar.id
         }))
     });
 
@@ -137,13 +139,16 @@ export default function CalendarSettings() {
                                 <Stack mt={3}>
                                     <Flex key={calendar.id} justify="flex-start" align="center" gap={3}>
                                         <Checkbox.Root
-                                            defaultChecked
+                                            checked={calendar.checkForDoubleBooking}
                                             colorPalette="blue"
                                             background="white"
                                             size="md"
+                                            onCheckedChange={({checked}) => {
+                                                setCalendars(calendars.map((c: any) => c.id === calendar.id ? { ...c, checkForDoubleBooking: checked } : c));
+                                            }}
                                         >
                                             <Checkbox.HiddenInput />
-                                            <Checkbox.Control />
+                                            <Checkbox.Control/>
                                         </Checkbox.Root>
                                         <Text fontSize="sm" color="gray.700">
                                             Check for conflicts to prevent double bookings
@@ -200,7 +205,8 @@ export default function CalendarSettings() {
                     <>
                         <Select.Root
                             collection={calendarOptions}
-                            defaultValue={[calendars[0]?.userEmail]}
+                            defaultValue={[primaryCalendarId]}
+                            onValueChange={(value) => dispatch(setPrimaryCalendarId(value.value[0]))}
                             className='peer'
                             size="lg"
                             css={{ "--focus-color": "blue" }}
@@ -266,7 +272,7 @@ export default function CalendarSettings() {
                     borderRadius="md"
                     flex="0 0 auto"
                     minW="120px"
-                    onClick={() => dispatch(setStep(OnboardingStep.USER_INFO))}
+                    onClick={() => dispatch(setCalendarsAndStep({ calendars, step: OnboardingStep.USER_INFO }))}
                 >
                     Back
                 </Button>
@@ -276,7 +282,9 @@ export default function CalendarSettings() {
                     borderRadius="md"
                     colorPalette="blue"
                     flex="1"
-                    onClick={() => dispatch(setStep(OnboardingStep.AVAILABILITY))}
+                    onClick={() => {
+                        dispatch(setCalendarsAndStep({ calendars, step: OnboardingStep.AVAILABILITY }));
+                    }}
                 >
                     Next Step →
                 </Button>
@@ -326,7 +334,7 @@ export default function CalendarSettings() {
                                     You can always add it back later.
                                 </Text>
                             </Box>
-                            
+
                             <Stack direction="row" gap={3} justify="flex-end">
                                 <Button
                                     size="md"

@@ -30,6 +30,7 @@ const onboardingSlice = createSlice({
             slug: '',
             email: '',
             name: '',
+            primaryCalendarId: '',
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         }
     },
@@ -52,6 +53,14 @@ const onboardingSlice = createSlice({
             state.userData.name = name;
             state.userData.timezone = timezone;
             state.step = step;
+        },
+        setCalendarsAndStep: (state, action) => {
+            const { calendars, step } = action.payload;
+            state.calendars = calendars;
+            state.step = step;
+        },
+        setPrimaryCalendarId: (state, action) => {
+            state.userData.primaryCalendarId = action.payload;
         },
         setCalendars: (state, action) => {
             state.calendars = action.payload;
@@ -79,14 +88,13 @@ const onboardingSlice = createSlice({
 
             })
             .addCase(ADD_CALENDAR_SUCCESS, (state, action) => {
-                debugger
                 state.isLoading = false;
                 state.calendars = [...state.calendars, action.payload.data];
             });
     }
 });
 
-export const { setStep, setSlug, setName, setTimezone, setUserDataAndStep, setCalendars, setAvailability } = onboardingSlice.actions;
+export const { setStep, setSlug, setName, setTimezone, setUserDataAndStep, setCalendarsAndStep, setAvailability, setPrimaryCalendarId } = onboardingSlice.actions;
 
 export const getOnboardingData = createApiThunk(GET_ONBOARDING_DATA, '/onboarding');
 
