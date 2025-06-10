@@ -1,7 +1,7 @@
 import { Box, createListCollection, defineStyle, Field, Input, Text } from "@chakra-ui/react";
 import { Portal } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
-import { useState, useMemo, memo, useCallback } from "react";
+import { useState, useMemo, memo, useCallback, useEffect } from "react";
 
 // Move all utility functions and static data outside the component
 const getBrowserLocale = () => {
@@ -137,6 +137,19 @@ const BROWSER_LOCALE = getBrowserLocale();
 
 function TimezoneInput({ value, onChange }: TimezoneInputProps) {
     const [searchQuery, setSearchQuery] = useState("");
+    const [currentTime, setCurrentTime] = useState(() => getCurrentTime());
+    
+    useEffect(() => {
+        const updateTime = () => {
+            const newTime = getCurrentTime();
+            setCurrentTime(newTime);
+        };
+        updateTime();
+        const interval = setInterval(updateTime, 1_000);
+        return () => {
+            clearInterval(interval);
+        };
+    }, []);
 
     // Get cached timezone collection
     const timezones = useMemo(() => createTimezoneCollection(), []);
@@ -167,8 +180,7 @@ function TimezoneInput({ value, onChange }: TimezoneInputProps) {
         onChange?.(details.value[0]);
     }, [onChange]);
 
-    // Memoize current time display
-    const currentTimeDisplay = useMemo(() => getCurrentTime(), []);
+    // Memoize current timezone display
     const currentTimezoneDisplay = useMemo(() => 
         `${CURRENT_TIMEZONE} ${getTimezoneDisplayName(CURRENT_TIMEZONE, BROWSER_LOCALE)}`, 
         []
@@ -236,11 +248,10 @@ function TimezoneInput({ value, onChange }: TimezoneInputProps) {
                 </Portal>
             </Select.Root>
             <Text fontSize="xs" color="gray.500" mt={1}>
-                Current time: {currentTimeDisplay} · ({currentTimezoneDisplay})
+                Current time: {currentTime} · ({currentTimezoneDisplay})
             </Text>
         </Field.Root>
     )
 }
 
-// Export memoized component
 export default memo(TimezoneInput);
