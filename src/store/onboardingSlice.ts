@@ -14,8 +14,7 @@ const ADD_CALENDAR_FAILURE = `${ADD_CALENDAR}_FAILURE`;
 export enum OnboardingStep {
     USER_INFO = 'USER_INFO',
     CALENDAR_SETTINGS = 'CALENDAR_SETTINGS',
-    AVAILABILITY = 'AVAILABILITY',
-    USER_PROFILE = 'USER_PROFILE',
+    AVAILABILITY = 'AVAILABILITY'
 }
 
 const onboardingSlice = createSlice({
@@ -31,6 +30,8 @@ const onboardingSlice = createSlice({
             Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
             Thursday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
             Friday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
+            Saturday: { enabled: false, timeSlots: [] },
+            Sunday: { enabled: false, timeSlots: [] },
         },
         userData: {
             slug: '',

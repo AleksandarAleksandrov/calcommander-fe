@@ -556,7 +556,7 @@ export default function AvailabilityStep() {
                     colorPalette="blue"
                     flex="1"
                 >
-                    Next Step →
+                    Finish
                 </Button>
             </Stack>
 
