@@ -32,11 +32,21 @@ const Loading: React.FC<LoadingProps> = ({
         <Spinner
           color={color}
           size={size}
+          borderWidth="4px"
+          css={{ 
+            "--spinner-track-color": "colors.gray.200",
+            "--spinner-size": "4rem",
+            "--spinner-thickness": "6px",
+            "@media (min-width: 768px)": {
+              "--spinner-size": "5rem",
+              "--spinner-thickness": "8px"
+            }
+          }}
         />
         <Text
           fontSize="lg"
           fontWeight="medium"
-          color="gray.600"
+          color="blue.solid"
           _dark={{
             color: "gray.300"
           }}

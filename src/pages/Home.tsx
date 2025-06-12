@@ -1,3 +1,4 @@
+import Loading from '@/components/Loading';
 import type { RootState } from '@/store';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
@@ -7,7 +8,7 @@ export default function Home() {
 
   // Redirect based on onboarding status
   if (user?.hasCompletedOnboarding) {
-    return <div>Home</div>
+    return <Loading />
   } else {
     return <Navigate to="/onboarding" replace />;
   }
