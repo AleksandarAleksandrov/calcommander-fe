@@ -104,8 +104,9 @@ const onboardingSlice = createSlice({
                     Wednesday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
                     Thursday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
                     Friday: { enabled: true, timeSlots: [{ startTime: '09:00', endTime: '17:00' }] },
-                } : action.payload.data.availability;
+                } : action.payload.data.availability.availability;
                 state.userData = action.payload.data.userData;
+                state.userData.timezone = action.payload.data.userData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
             })
             .addCase(GET_ONBOARDING_DATA_FAILURE, (state, action) => {
                 state.isLoading = false;

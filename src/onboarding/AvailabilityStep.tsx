@@ -52,7 +52,7 @@ const createStartTimeCollection = (endTime: string, timeSlots: TimeSlot[], curre
     const filteredOptions = TIME_OPTIONS.filter(option => {
         const optionMinutes = timeToMinutes(option.value);
         // For the first slot (currentSlotIndex === 0), allow 00:00 by using >= instead of >
-        return currentSlotIndex === 0 
+        return currentSlotIndex === 0
             ? optionMinutes >= minStartTimeMinutes && optionMinutes < endTimeMinutes
             : optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
     });
@@ -91,7 +91,7 @@ const getFilteredStartTimeOptions = (endTime: string, timeSlots: TimeSlot[], cur
     return TIME_OPTIONS.filter(option => {
         const optionMinutes = timeToMinutes(option.value);
         // For the first slot (currentSlotIndex === 0), allow 00:00 by using >= instead of >
-        return currentSlotIndex === 0 
+        return currentSlotIndex === 0
             ? optionMinutes >= minStartTimeMinutes && optionMinutes < endTimeMinutes
             : optionMinutes > minStartTimeMinutes && optionMinutes < endTimeMinutes;
     });
@@ -198,35 +198,35 @@ export default function AvailabilityStep() {
             const existingSlots = prev[day].timeSlots;
             let defaultStartTime = '09:00';
             let defaultEndTime = '17:00';
-            
+
             // If there are existing slots, set start time after the last slot's end time
             if (existingSlots.length > 0) {
                 const lastSlot = existingSlots[existingSlots.length - 1];
                 const lastEndTimeMinutes = timeToMinutes(lastSlot.endTime);
-                
+
                 // Find the next available time slot after the last end time
-                const availableStartTimes = TIME_OPTIONS.filter(option => 
+                const availableStartTimes = TIME_OPTIONS.filter(option =>
                     timeToMinutes(option.value) > lastEndTimeMinutes
                 );
-                
+
                 if (availableStartTimes.length > 0) {
                     defaultStartTime = availableStartTimes[0].value;
-                    
+
                     // Calculate 1 hour after start time
                     const startTimeMinutes = timeToMinutes(defaultStartTime);
                     const oneHourLaterMinutes = startTimeMinutes + 60;
-                    
+
                     // Find all available end times after start time
-                    const availableEndTimes = TIME_OPTIONS.filter(option => 
+                    const availableEndTimes = TIME_OPTIONS.filter(option =>
                         timeToMinutes(option.value) > startTimeMinutes
                     );
-                    
+
                     if (availableEndTimes.length > 0) {
                         // Try to find a time that's 1 hour later
                         const oneHourLaterOption = availableEndTimes.find(option =>
                             timeToMinutes(option.value) >= oneHourLaterMinutes
                         );
-                        
+
                         if (oneHourLaterOption) {
                             // Use the first time that's at least 1 hour later
                             defaultEndTime = oneHourLaterOption.value;
@@ -246,16 +246,16 @@ export default function AvailabilityStep() {
                 // For the first slot, still try to set end time to 1 hour after start
                 const startTimeMinutes = timeToMinutes(defaultStartTime);
                 const oneHourLaterMinutes = startTimeMinutes + 60;
-                
+
                 const oneHourLaterOption = TIME_OPTIONS.find(option =>
                     timeToMinutes(option.value) >= oneHourLaterMinutes
                 );
-                
+
                 if (oneHourLaterOption) {
                     defaultEndTime = oneHourLaterOption.value;
                 } else {
                     // Fallback to last available time
-                    const availableEndTimes = TIME_OPTIONS.filter(option => 
+                    const availableEndTimes = TIME_OPTIONS.filter(option =>
                         timeToMinutes(option.value) > startTimeMinutes
                     );
                     if (availableEndTimes.length > 0) {
@@ -263,7 +263,7 @@ export default function AvailabilityStep() {
                     }
                 }
             }
-            
+
             return {
                 ...prev,
                 [day]: {
@@ -288,10 +288,10 @@ export default function AvailabilityStep() {
         const rect = event.currentTarget.getBoundingClientRect();
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-        
+
         const dropdownWidth = 250; // minW of dropdown
         const dropdownHeight = 350; // estimated height with new buttons
-        
+
         // Calculate position relative to viewport + scroll offset
         let top = rect.bottom + scrollTop + 8;
         let left = rect.left + scrollLeft;
@@ -370,7 +370,7 @@ export default function AvailabilityStep() {
             {DAYS.map((day) => {
                 // Safety check to prevent undefined errors
                 const dayAvailability = availability[day] || { enabled: false, timeSlots: [] };
-                
+
                 return (
                     <Box
                         key={day}
@@ -379,7 +379,7 @@ export default function AvailabilityStep() {
                         border="1px solid"
                         borderColor={dayAvailability.enabled ? "gray.100" : "gray.200"}
                     >
-                                            <Stack direction="row" gap={4} align="flex-start">
+                        <Stack direction="row" gap={4} align="flex-start">
                             <Stack direction="row" gap={4} align="center">
                                 {/* Custom Switch Toggle */}
 
@@ -407,136 +407,136 @@ export default function AvailabilityStep() {
                             {dayAvailability.enabled && (
                                 <Stack gap={2} align="stretch" flex={1}>
                                     {dayAvailability.timeSlots.map((slot, slotIndex) => (
-                                    <Stack key={slotIndex} direction="row" gap={3} align="center">
-                                        <Select.Root
-                                            value={[slot.startTime]}
-                                            onValueChange={(details) => handleTimeChange(day, slotIndex, 'startTime', details.value)}
-                                            collection={createStartTimeCollection(slot.endTime, dayAvailability.timeSlots, slotIndex)}
-                                            size="md"
-                                            positioning={{ strategy: "absolute" }}
-                                        >
-                                            <Select.Trigger
-                                                textAlign="center"
-                                                border="1px solid"
-                                                borderColor="gray.300"
-                                                borderRadius="md"
-                                                cursor="pointer"
+                                        <Stack key={slotIndex} direction="row" gap={3} align="center">
+                                            <Select.Root
+                                                value={[slot.startTime]}
+                                                onValueChange={(details) => handleTimeChange(day, slotIndex, 'startTime', details.value)}
+                                                collection={createStartTimeCollection(slot.endTime, dayAvailability.timeSlots, slotIndex)}
+                                                size="md"
+                                                positioning={{ strategy: "absolute" }}
                                             >
-                                                <Select.ValueText placeholder="Select time" />
-                                            </Select.Trigger>
-                                            <Portal>
-                                                <Select.Positioner>
-                                                    <Select.Content
-                                                        bg="white"
-                                                        border="1px solid"
-                                                        borderColor="gray.200"
-                                                        borderRadius="md"
-                                                        boxShadow="lg"
-                                                        width="80px"
-                                                        maxH="200px"
-                                                        overflowY="auto"
-                                                        zIndex={1000}
-                                                    >
-                                                        {getFilteredStartTimeOptions(slot.endTime, dayAvailability.timeSlots, slotIndex).map((time) => (
-                                                            <Select.Item key={time.value} item={time}>
-                                                                <Select.ItemText>{time.label}</Select.ItemText>
-                                                            </Select.Item>
-                                                        ))}
-                                                    </Select.Content>
-                                                </Select.Positioner>
-                                            </Portal>
-                                        </Select.Root>
-                                        <Text color="gray.500" fontSize="lg">–</Text>
-                                        <Select.Root
-                                            value={[slot.endTime]}
-                                            onValueChange={(details) => handleTimeChange(day, slotIndex, 'endTime', details.value)}
-                                            collection={createEndTimeCollection(slot.startTime, dayAvailability.timeSlots, slotIndex)}
-                                            size="md"
-                                            positioning={{ strategy: "absolute" }}
-                                        >
-                                            <Select.Trigger
-                                                textAlign="center"
-                                                border="1px solid"
-                                                borderColor="gray.300"
-                                                borderRadius="md"
-                                                cursor="pointer"
+                                                <Select.Trigger
+                                                    textAlign="center"
+                                                    border="1px solid"
+                                                    borderColor="gray.300"
+                                                    borderRadius="md"
+                                                    cursor="pointer"
+                                                >
+                                                    <Select.ValueText placeholder="Select time" />
+                                                </Select.Trigger>
+                                                <Portal>
+                                                    <Select.Positioner>
+                                                        <Select.Content
+                                                            bg="white"
+                                                            border="1px solid"
+                                                            borderColor="gray.200"
+                                                            borderRadius="md"
+                                                            boxShadow="lg"
+                                                            width="80px"
+                                                            maxH="200px"
+                                                            overflowY="auto"
+                                                            zIndex={1000}
+                                                        >
+                                                            {getFilteredStartTimeOptions(slot.endTime, dayAvailability.timeSlots, slotIndex).map((time) => (
+                                                                <Select.Item key={time.value} item={time}>
+                                                                    <Select.ItemText>{time.label}</Select.ItemText>
+                                                                </Select.Item>
+                                                            ))}
+                                                        </Select.Content>
+                                                    </Select.Positioner>
+                                                </Portal>
+                                            </Select.Root>
+                                            <Text color="gray.500" fontSize="lg">–</Text>
+                                            <Select.Root
+                                                value={[slot.endTime]}
+                                                onValueChange={(details) => handleTimeChange(day, slotIndex, 'endTime', details.value)}
+                                                collection={createEndTimeCollection(slot.startTime, dayAvailability.timeSlots, slotIndex)}
+                                                size="md"
+                                                positioning={{ strategy: "absolute" }}
                                             >
-                                                <Select.ValueText placeholder="Select time" />
-                                            </Select.Trigger>
-                                            <Portal>
-                                                <Select.Positioner>
-                                                    <Select.Content
-                                                        bg="white"
-                                                        border="1px solid"
-                                                        borderColor="gray.200"
-                                                        borderRadius="md"
-                                                        boxShadow="lg"
-                                                        maxH="200px"
-                                                        width="80px"
-                                                        overflowY="auto"
-                                                        zIndex={1000}
-                                                    >
-                                                        {getFilteredEndTimeOptions(slot.startTime, dayAvailability.timeSlots, slotIndex).map((time) => (
-                                                            <Select.Item key={time.value} item={time}>
-                                                                <Select.ItemText>{time.label}</Select.ItemText>
-                                                            </Select.Item>
-                                                        ))}
-                                                    </Select.Content>
-                                                </Select.Positioner>
-                                            </Portal>
-                                        </Select.Root>
+                                                <Select.Trigger
+                                                    textAlign="center"
+                                                    border="1px solid"
+                                                    borderColor="gray.300"
+                                                    borderRadius="md"
+                                                    cursor="pointer"
+                                                >
+                                                    <Select.ValueText placeholder="Select time" />
+                                                </Select.Trigger>
+                                                <Portal>
+                                                    <Select.Positioner>
+                                                        <Select.Content
+                                                            bg="white"
+                                                            border="1px solid"
+                                                            borderColor="gray.200"
+                                                            borderRadius="md"
+                                                            boxShadow="lg"
+                                                            maxH="200px"
+                                                            width="80px"
+                                                            overflowY="auto"
+                                                            zIndex={1000}
+                                                        >
+                                                            {getFilteredEndTimeOptions(slot.startTime, dayAvailability.timeSlots, slotIndex).map((time) => (
+                                                                <Select.Item key={time.value} item={time}>
+                                                                    <Select.ItemText>{time.label}</Select.ItemText>
+                                                                </Select.Item>
+                                                            ))}
+                                                        </Select.Content>
+                                                    </Select.Positioner>
+                                                </Portal>
+                                            </Select.Root>
 
-                                        <IconButton
-                                            aria-label="Add time slot"
-                                            size="sm"
-                                            variant="ghost"
-                                            visibility={slotIndex === dayAvailability.timeSlots.length - 1 ? "visible" : "hidden"}
-                                            disabled={(() => {
-                                                const lastSlot = dayAvailability.timeSlots[dayAvailability.timeSlots.length - 1];
-                                                const availableAfterLastSlot = TIME_OPTIONS.filter(option =>
-                                                    timeToMinutes(option.value) > timeToMinutes(lastSlot.endTime)
-                                                );
-                                                return availableAfterLastSlot.length < 2; // Need at least 2 slots (start + end)
-                                            })()}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                addTimeSlot(day);
-                                            }}
-                                        >
-                                            <FiPlus />
-                                        </IconButton>
+                                            <IconButton
+                                                aria-label="Add time slot"
+                                                size="sm"
+                                                variant="ghost"
+                                                visibility={slotIndex === dayAvailability.timeSlots.length - 1 ? "visible" : "hidden"}
+                                                disabled={(() => {
+                                                    const lastSlot = dayAvailability.timeSlots[dayAvailability.timeSlots.length - 1];
+                                                    const availableAfterLastSlot = TIME_OPTIONS.filter(option =>
+                                                        timeToMinutes(option.value) > timeToMinutes(lastSlot.endTime)
+                                                    );
+                                                    return availableAfterLastSlot.length < 2; // Need at least 2 slots (start + end)
+                                                })()}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    addTimeSlot(day);
+                                                }}
+                                            >
+                                                <FiPlus />
+                                            </IconButton>
 
-                                        <IconButton
-                                            aria-label="Delete time slot"
-                                            size="sm"
-                                            disabled={dayAvailability.timeSlots.length === 1}
-                                            variant="ghost"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                deleteTimeSlot(day, slotIndex);
-                                            }}
-                                        >
-                                            <FiX />
-                                        </IconButton>
+                                            <IconButton
+                                                aria-label="Delete time slot"
+                                                size="sm"
+                                                disabled={dayAvailability.timeSlots.length === 1}
+                                                variant="ghost"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    deleteTimeSlot(day, slotIndex);
+                                                }}
+                                            >
+                                                <FiX />
+                                            </IconButton>
 
-                                        <IconButton
-                                            aria-label="Copy time slot"
-                                            size="sm"
-                                            variant="ghost"
-                                            visibility={slotIndex === 0 ? "visible" : "hidden"}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                openCopyDialog(day, e);
-                                            }}
-                                        >
-                                            <FiCopy />
-                                        </IconButton>
-                                    </Stack>
-                                ))}
-                            </Stack>
-                        )}
-                    </Stack>
-                </Box>
+                                            <IconButton
+                                                aria-label="Copy time slot"
+                                                size="sm"
+                                                variant="ghost"
+                                                visibility={slotIndex === 0 ? "visible" : "hidden"}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openCopyDialog(day, e);
+                                                }}
+                                            >
+                                                <FiCopy />
+                                            </IconButton>
+                                        </Stack>
+                                    ))}
+                                </Stack>
+                            )}
+                        </Stack>
+                    </Box>
                 );
             })}
 
@@ -561,7 +561,7 @@ export default function AvailabilityStep() {
                         const onboardingPayload = {
                             userData,
                             calendars,
-                            availability
+                            availability: { availability }
                         };
                         dispatch(setOnboardingData(onboardingPayload) as any);
                     }}
@@ -601,7 +601,7 @@ export default function AvailabilityStep() {
                                 Copy availability to...
                             </Text>
                         </Stack>
-                        
+
                         {/* Workdays and All Week buttons */}
                         <Stack direction="row" gap={2} mb={3}>
                             <Button
@@ -623,14 +623,14 @@ export default function AvailabilityStep() {
                                 All Week
                             </Button>
                         </Stack>
-                        
+
                         {/* Separator line */}
-                        <Box 
-                            height="1px" 
-                            bg="gray.200" 
+                        <Box
+                            height="1px"
+                            bg="gray.200"
                             mb={3}
                         />
-                        
+
                         <Stack gap={2} mb={4}>
                             {DAYS.map((day) => (
                                 <Checkbox.Root
