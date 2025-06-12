@@ -6,11 +6,12 @@ export const USER_ME_REQUEST = `${USER_ME}_REQUEST`;
 export const USER_ME_SUCCESS = `${USER_ME}_SUCCESS`;
 export const USER_ME_FAILURE = `${USER_ME}_FAILURE`;
 
+const SET_ONBOARDING_DATA_SUCCESS = 'SET_ONBOARDING_DATA_SUCCESS';
+
 const userSlice = createSlice({
     name: '@@user',
     initialState: {
         user: null,
-        hasCompletedOnboarding: false,
         isLoading: false,
     },
     reducers: {
@@ -26,6 +27,9 @@ const userSlice = createSlice({
         });
         builder.addCase(USER_ME_FAILURE, (state) => {
             state.isLoading = false;
+        });
+        builder.addCase(SET_ONBOARDING_DATA_SUCCESS , (state, action: any) => {
+            state.user.hasCompletedOnboarding = true;
         });
     }
 });

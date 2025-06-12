@@ -11,6 +11,11 @@ const ADD_CALENDAR_REQUEST = `${ADD_CALENDAR}_REQUEST`;
 const ADD_CALENDAR_SUCCESS = `${ADD_CALENDAR}_SUCCESS`;
 const ADD_CALENDAR_FAILURE = `${ADD_CALENDAR}_FAILURE`;
 
+const SET_ONBOARDING_DATA = 'SET_ONBOARDING_DATA';
+const SET_ONBOARDING_DATA_REQUEST = `${SET_ONBOARDING_DATA}_REQUEST`;
+const SET_ONBOARDING_DATA_SUCCESS = `${SET_ONBOARDING_DATA}_SUCCESS`;
+const SET_ONBOARDING_DATA_FAILURE = `${SET_ONBOARDING_DATA}_FAILURE`;
+
 export enum OnboardingStep {
     USER_INFO = 'USER_INFO',
     CALENDAR_SETTINGS = 'CALENDAR_SETTINGS',
@@ -66,6 +71,9 @@ const onboardingSlice = createSlice({
             state.calendars = calendars;
             state.step = step;
         },
+        setAvailability: (state, action) => {
+            state.availability = action.payload;
+        },
         setAvailabilityAndStep: (state, action) => {
             const { availability, step } = action.payload;
             state.availability = availability;
@@ -108,6 +116,12 @@ const onboardingSlice = createSlice({
             .addCase(ADD_CALENDAR_SUCCESS, (state, action) => {
                 state.isLoading = false;
                 state.calendars = [...state.calendars, action.payload.data];
+            })
+            .addCase(SET_ONBOARDING_DATA_REQUEST, (state, action) => {
+                state.isLoading = true;
+            })
+            .addCase(SET_ONBOARDING_DATA_SUCCESS, (state, action) => {
+                state.isLoading = false;
             });
     }
 });
@@ -115,6 +129,8 @@ const onboardingSlice = createSlice({
 export const { setStep, setSlug, setName, setTimezone, setUserDataAndStep, setCalendarsAndStep, setAvailability, setPrimaryCalendarId, setAvailabilityAndStep } = onboardingSlice.actions;
 
 export const getOnboardingData = createApiThunk(GET_ONBOARDING_DATA, '/onboarding');
+
+export const setOnboardingData = createApiThunk(SET_ONBOARDING_DATA, '/onboarding', 'POST');
 
 export const addCalendar = createApiThunk(ADD_CALENDAR, '/calendars', 'POST');
 

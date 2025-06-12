@@ -7,16 +7,11 @@ import { OnboardingPage } from './onboarding';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import GoogleRedirect from './signin/GoogleRedirect';
+import Loading from './components/Loading';
 
 // Lazy load components
 const Home = lazy(() => import('./pages/Home'));
 
-// Loading fallback component
-const Loading = () => (
-  <div className="loading">
-    <p>Loading...</p>
-  </div>
-);
 
 const Layout = () => {
   return (

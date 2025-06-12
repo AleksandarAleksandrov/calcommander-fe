@@ -1,4 +1,4 @@
-import { setAvailabilityAndStep, setStep } from "@/store/onboardingSlice";
+import { setAvailabilityAndStep, setAvailability as setStoreAvailability, setOnboardingData } from "@/store/onboardingSlice";
 import { OnboardingStep } from "@/store/onboardingSlice";
 import { Box, Text, Stack, Button, IconButton, Switch, Select, createListCollection, Portal, Checkbox } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
@@ -117,6 +117,8 @@ const getFilteredEndTimeOptions = (startTime: string, timeSlots: TimeSlot[], cur
 export default function AvailabilityStep() {
     const dispatch = useDispatch();
     const storeAvailability = useSelector((state: RootState) => state.onboarding.availability);
+    const userData = useSelector((state: RootState) => state.onboarding.userData);
+    const calendars = useSelector((state: RootState) => state.onboarding.calendars);
 
     // Initialize with default availability to prevent undefined errors
     const getDefaultAvailability = (): Record<string, DayAvailability> => ({
@@ -555,6 +557,14 @@ export default function AvailabilityStep() {
                     borderRadius="md"
                     colorPalette="blue"
                     flex="1"
+                    onClick={() => {
+                        const onboardingPayload = {
+                            userData,
+                            calendars,
+                            availability
+                        };
+                        dispatch(setOnboardingData(onboardingPayload) as any);
+                    }}
                 >
                     Finish
                 </Button>

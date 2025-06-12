@@ -13,8 +13,16 @@ import CalendarSettings from './CalendarSettings';
 import onboardingCharacter from '@/assets/images/onboarding_character.png';
 import womanHoldingCalendar from '@/assets/images/woman_holding_calendar.png';
 import womanPointingClock from '@/assets/images/woman_pointing_clock.png';
+import { Navigate } from 'react-router-dom';
 
 export default function OnboardingPage() {
+
+    const { user } = useSelector((state: RootState) => state.user as any);
+
+    if (user?.hasCompletedOnboarding) {
+        return <Navigate to="/" replace />;
+    }
+
 
     const step = useSelector((state: RootState) => state.onboarding.step);
     const hasInitialized = useSelector((state: RootState) => state.onboarding.hasInitialized);

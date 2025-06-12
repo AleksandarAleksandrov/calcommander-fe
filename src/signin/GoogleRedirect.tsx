@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useRef, useCallback } from 'react';
 import type { RootState } from '@/store';
 import { setAuthData } from '@/utils/auth';
+import Loading from '@/components/Loading';
 
 export default function GoogleRedirect() {
     const dispatch = useDispatch();
@@ -42,7 +43,7 @@ export default function GoogleRedirect() {
         <div>
             <div>
                 {redirectPageStatus === RedirectPageStatus.LOADING && (
-                    <div>Loading...</div>
+                    <Loading />
                 )}
             </div>
         </div>

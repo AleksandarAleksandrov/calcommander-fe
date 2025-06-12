@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../hooks/useAuth';
 import { getUserMe } from '../store/userSlice';
 import type { AppDispatch, RootState } from '../store';
+import Loading from './Loading';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -26,9 +27,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   // Show loading while fetching user data
   if (isLoading || user === null) {
     return (
-      <div className="loading">
-        <p>Loading...</p>
-      </div>
+      <Loading />
     );
   }
   
